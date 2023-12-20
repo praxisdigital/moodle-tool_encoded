@@ -14,12 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace tool_base64encoder\privacy;
+namespace tool_encoded\privacy;
 
 /**
- * Admin tool base64encoder privacy provider.
+ * Admin tool encoded privacy provider.
  *
- * @package   tool_base64encoder
+ * @package   tool_encoded
  * @copyright 2023 Mathew May <mathew.solutions>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

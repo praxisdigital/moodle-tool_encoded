@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="admin/tool/encoded/db" VERSION="20231228" COMMENT="XMLDB file for Moodle admin/tool/encoded"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="tool_encoded_potential_records" COMMENT="Output of ad-hoc tasks where suspected fields are stored.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="native_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The original ID of the record in its table."/>
+        <FIELD NAME="pid" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="Our task to get the meta info about the report."/>
+        <FIELD NAME="link_fragment" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="A slug to build a URL to directly access the content."/>
+        <FIELD NAME="report_table" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Table this record was found in."/>
+        <FIELD NAME="report_columns" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The csv formatted name of columns searched within."/>
+        <FIELD NAME="encoded_size" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="The encoded size as bytes."/>
+        <FIELD NAME="mimetype" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="The type that was found in the column."/>
+        <FIELD NAME="migrated" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Migration status."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

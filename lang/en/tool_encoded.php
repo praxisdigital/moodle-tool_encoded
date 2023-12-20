@@ -17,9 +17,33 @@
 /**
  * Admin tool base64encode strings.
  *
- * @package    tool_base64encoder
+ * @package    tool_encoded
  * @copyright  2023 Mathew May <mathew.solutions>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+// Plugin strings.
 $string['pluginname'] = 'Base64 Encoder';
 $string['privacy:metadata'] = 'The Site admin presets tool does not store any personal data.';
+$string['generatereport'] = 'Generate report';
+$string['displayreport'] = 'Display report';
+$string['sizesetting'] = 'Size setting';
+$string['sizesettingdesc'] = 'The size in kilobytes to flag in the generated report.';
+
+// Index strings.
+$string['falseaction'] = 'The selected action does not exist.';
+
+// Generate page strings.
+$string['allcolumns'] = 'All found columns ({$a})';
+$string['columns'] = 'Column ({$a})';
+$string['generatefor'] = 'Generate report for:';
+$string['generateheader'] = 'Tables that may have issues: ({$a})';
+$string['generatesubheader'] = 'Click a table name to view potential columns and chose an action.';
+
+// RB strings.
+$string['encoderlog'] = 'Encoder log';
+$string['size'] = '{$a} kb';
+$string['recordid'] = 'Native ID';
+$string['table'] = 'Table';
+$string['column'] = 'Column(s)';
+$string['mime'] = 'MIME Type';
+$string['migrated'] = 'Migrated';

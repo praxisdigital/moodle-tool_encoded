@@ -1,0 +1,93 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_encoded/generate
+
+    Renders the generate page for the encoded tool.
+
+    Context variables required for this template:
+    * tables - array of tables
+        * name - name of the table
+        * colcount - number of columns in the table
+        * columns - array of columns
+            * name - name of the column
+            * link - link to the column page
+        * alllink - link to the all columns page
+        * all - all columns in the table
+    * count - number of tables
+
+    Example context (json):
+    {
+        "tables": [
+            {
+                "name": "table1",
+                "colcount": 2,
+                "columns": [
+                    {
+                        "name": "column1",
+                        "link": ""
+                    },
+                    {
+                        "name": "column2",
+                        "link": ""
+                    }
+                ],
+                "alllink": "",
+                "all": "column1, column2"
+            },
+            {
+                "name": "table2",
+                "colcount": 1,
+                "columns": [
+                    {
+                        "name": "column1",
+                        "link": ""
+                    }
+                ],
+                "alllink": "",
+                "all": "column1"
+            }
+        ],
+        "count": 2
+    }
+}}
+<h2 class="h3">{{#str}}generateheader, tool_encoded, {{count}}{{/str}}</h2>
+<p>{{#str}}generatesubheader, tool_encoded{{/str}}</p>
+<div class="accordion" id="table_accordian">
+    {{#tables}}
+        <div class="card">
+            <div class="card-header" id="heading_{{name}}">
+                <h2 class="mb-0">
+                    <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collpase_{{name}}" aria-expanded="false" aria-controls="collpase_{{name}}">
+                        {{name}}
+                        <span class="badge badge-warning badge-pill">{{colcount}}</span>
+                    </button>
+                </h2>
+            </div>
+            <div id="collpase_{{name}}" class="collapse" aria-labelledby="heading_{{name}}" data-parent="#table_accordian">
+                <div class="card-body">
+                    <h3 class="h4">{{#str}}generatefor, tool_encoded{{/str}}</h3>
+                    {{#columns}}
+                        <a href="{{link}}" data-column="{{name}}">{{#str}}columns, tool_encoded, {{name}}{{/str}}</a>
+                    {{/columns}}
+                    <hr>
+                    <a href="{{alllink}}" data-columns="{{all}}">{{#str}}allcolumns, tool_encoded, {{name}}{{/str}}</a>
+                </div>
+            </div>
+        </div>
+    {{/tables}}
+</div>

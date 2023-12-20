@@ -1,4 +1,4 @@
-@tool @tool_base64encoder @javascript
+@tool @tool_encoded @javascript
 Feature: Find potential records that need to be migrated and action as appropriate
 
   Background:
@@ -8,22 +8,22 @@ Feature: Find potential records that need to be migrated and action as appropria
     # Shorthand for selecting and generating the report.
     And I trigger the migration tool population task
     And I log in as "admin"
-    And I navigate to "Plugins > Admin tools > base64encoder > report" in site administration
+    And I navigate to "Plugins > Admin tools > encoded > report" in site administration
 
   Scenario: With a known bad record, create a new adhoc task to migrate the record and verify that it is migrated
     Given I should see "Migrate" and "Delete" as the only options for the record
     When I trigger the migration tool record to Migrate
     And I navigate to the adhoc report
     Then I should see the migration task was successful
-    And I navigate to "Plugins > Admin tools > base64encoder > report" in site administration
+    And I navigate to "Plugins > Admin tools > encoded > report" in site administration
     And the record should be flagged as migrated
 
   # This can be extended to ensure large records are migrated.
   Scenario: With a known bad record, if it is larger than the admin setting, warn the admin
-    Given The base64encoder max size admin setting is 10Kb
+    Given The encoded max size admin setting is 10Kb
     When A big bad record is added by the learner
     And The migration tool population task is triggered
-    And I navigate to "Plugins > Admin tools > base64encoder > report" in site administration
+    And I navigate to "Plugins > Admin tools > encoded > report" in site administration
     Then I should see a warning message associated with the record
     And I should see "Migrate" and "Delete" as the only options
 
@@ -35,14 +35,14 @@ Feature: Find potential records that need to be migrated and action as appropria
     # I think successful as the process would run and not errors were detected.
     Then I should see the migration task was successful
     And I should see "No records migrated"
-    And I navigate to "Plugins > Admin tools > base64encoder > report" in site administration
+    And I navigate to "Plugins > Admin tools > encoded > report" in site administration
     And the record should be flagged as not migrated
 
   # TODO: Question - Should we limit the task to a single module instance? Reading emails it seems we should only look at selected columns in a table.
   Scenario: Only search within a single module instance at a time when generating the report
     Given I have two workshop modules
     And I trigger the migration tool population task once with a cmid
-    When I navigate to "Plugins > Admin tools > base64encoder > report" in site administration
+    When I navigate to "Plugins > Admin tools > encoded > report" in site administration
     Then I should only see records from the first workshop module with the matching cmid
     And I should not see records from the second workshop module
 
@@ -60,5 +60,5 @@ Feature: Find potential records that need to be migrated and action as appropria
     And I trigger the migration tool to "Create adhoc task" / "Migrate all"
     When I navigate to the adhoc report
     Then I should see the migration tasks were successful
-    And I navigate to "Plugins > Admin tools > base64encoder > report" in site administration
+    And I navigate to "Plugins > Admin tools > encoded > report" in site administration
     And the records should be flagged as migrated

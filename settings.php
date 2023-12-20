@@ -17,11 +17,45 @@
 /**
  * Admin tool base64encode settings.
  *
- * @package   tool_base64encoder
+ * @package   tool_encoded
  * @copyright 2023 Mathew May <mathew.solutions>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die();
 
-// Stubbed out.
+if ($hassiteconfig) {
+    $ADMIN->add(
+        'tools',
+        new admin_category('encodedfolder', get_string('pluginname', 'tool_encoded'))
+    );
+
+    $ADMIN->add(
+        'encodedfolder',
+        new admin_externalpage(
+            'tool_encoded_generate',
+            get_string('generatereport', 'tool_encoded'),
+            new moodle_url('/admin/tool/encoded/index.php', ['action' => 'generate']),
+        )
+    );
+
+    $ADMIN->add(
+        'encodedfolder',
+        new admin_externalpage(
+            'tool_encoded_report',
+            get_string('displayreport', 'tool_encoded'),
+            new moodle_url('/admin/tool/encoded/index.php', ['action' => 'report']),
+        )
+    );
+
+    $settings = new admin_settingpage('tool_encoded', get_string('settings'));
+
+    $settings->add(new admin_setting_configtext(
+        'tool_encoded/size',
+        new lang_string('sizesetting', 'tool_encoded'),
+        new lang_string('sizesettingdesc', 'tool_encoded'),
+        10,
+        PARAM_INT,
+    ));
+
+    $ADMIN->add('encodedfolder', $settings);
+}

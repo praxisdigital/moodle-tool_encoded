@@ -17,13 +17,13 @@
 /**
  * Admin tool base64encode version file.
  *
- * @package   tool_base64encoder
+ * @package   tool_encoded
  * @copyright 2023 Mathew May <mathew.solutions>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'tool_base64encoder';
+$plugin->component = 'tool_encoded';
 $plugin->version = 2023121200;
 $plugin->requires = 2023102700;
