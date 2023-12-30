@@ -67,7 +67,16 @@ class records extends system_report {
      * @return bool
      */
     protected function can_view(): bool {
-        return has_capability('moodle/site:config', context_system::instance());
+        return has_capability('moodle/site:configview', context_system::instance());
+    }
+
+    /**
+     * Get the visible name of the report
+     *
+     * @return string
+     */
+    public static function get_name(): string {
+        return get_string('encoderlog', 'admin');
     }
 
     /**

@@ -35,6 +35,7 @@ if ($hassiteconfig) {
             'tool_encoded_generate',
             get_string('generatereport', 'tool_encoded'),
             new moodle_url('/admin/tool/encoded/index.php', ['action' => 'generate']),
+            'moodle/site:configview'
         )
     );
 
@@ -44,10 +45,11 @@ if ($hassiteconfig) {
             'tool_encoded_report',
             get_string('displayreport', 'tool_encoded'),
             new moodle_url('/admin/tool/encoded/index.php', ['action' => 'report']),
+            'moodle/site:configview'
         )
     );
 
-    $settings = new admin_settingpage('tool_encoded', get_string('settings'));
+    $settings = new admin_settingpage('tool_encoded', get_string('settings'), 'moodle/site:configview');
 
     $settings->add(new admin_setting_configtext(
         'tool_encoded/size',

@@ -29,13 +29,13 @@ require_once(__DIR__ . '/../../../config.php');
 
 $action = optional_param('action', 'report', PARAM_ALPHA);
 
-require_login();
+require_login(0, false);
 
 if (!$context = context_system::instance()) {
     throw new moodle_exception('wrongcontext', 'error');
 }
 
-require_capability('moodle/site:config', $context);
+require_capability('moodle/site:configview', $context);
 
 // Loads the required action class and form.
 $classname = 'tool_encoded\\output\\'.$action;
@@ -44,14 +44,15 @@ if (!class_exists($classname) && $action !== 'report') {
     throw new moodle_exception('falseaction', 'tool_encoded', $action);
 }
 
+$url = new moodle_url('/admin/tool/encoded/index.php');
+
 // Display the page.
 $PAGE->set_context(context_system::instance());
-$PAGE->set_pagelayout('base');
+$PAGE->set_url($url);
+$PAGE->set_pagelayout('admin');
 // TODO: Change title and heading.
 $PAGE->set_title('title example');
 $PAGE->set_heading('heading example');
-$url = new moodle_url('/admin/tool/encoded/index.php');
-$PAGE->set_url($url);
 
 echo $OUTPUT->header();
 if ($action === 'report') {
