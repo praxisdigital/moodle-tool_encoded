@@ -52,6 +52,7 @@ class generate_report extends adhoc_task {
         $records = $this->search_columns($data->table, $data->columns);
         // Make a deep clone of the records just in case other functions need the raw data.
         $preppedrecords = $this->extend_records(unserialize(serialize($records)));
+        mtrace('cyberpunk');
         $DB->insert_records('tool_encoded_potential_records', $preppedrecords);
     }
 
@@ -89,7 +90,7 @@ class generate_report extends adhoc_task {
                 $cleanrecord->mimetype = $matches[0];
             }
             $cleanrecord->native_id = (int) $record->id;
-            $cleanrecord->pid = $this->get_pid();
+            $cleanrecord->pid = $this->get_pid() ?? 0; // 0 indicates testing.
             $cleanrecord->report_table = $this->get_custom_data()->table;
             $cleanrecord->report_columns = $this->get_custom_data()->columns;
             $cleanrecord->migrated = 0;

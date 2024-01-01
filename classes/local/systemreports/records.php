@@ -76,7 +76,7 @@ class records extends system_report {
      * @return string
      */
     public static function get_name(): string {
-        return get_string('encoderlog', 'admin');
+        return get_string('encoderlog', 'tool_encoded');
     }
 
     /**

@@ -41,6 +41,7 @@ $string['generatesubheader'] = 'Click a table name to view potential columns and
 
 // RB strings.
 $string['encoderlog'] = 'Encoder log';
+$string['encoderentity'] = 'Encoder entity';
 $string['size'] = '{$a} kb';
 $string['recordid'] = 'Native ID';
 $string['table'] = 'Table';

@@ -38,7 +38,9 @@ class generate implements templatable, renderable {
     public function __construct() {
         $action = optional_param('testing', '', PARAM_ALPHA);
         if ($action === 'submit') {
+            // @codeCoverageIgnoreStart
             $this->handle_submission();
+            // @codeCoverageIgnoreEnd
         }
         $this->potentialtables = $this->fetch_tables();
     }
@@ -78,7 +80,7 @@ class generate implements templatable, renderable {
             $urlparams['columns'] = implode(',', $allcols);
             $cal = new \moodle_url('#', $urlparams);
             if (!empty($potentialcolumns)) {
-                $potentialtables[] = [
+                $potentialtables[$table] = [
                     'name' => $table,
                     'columns' => $potentialcolumns,
                     'colcount' => count($potentialcolumns),
@@ -90,8 +92,12 @@ class generate implements templatable, renderable {
         return $potentialtables;
     }
 
+    /**
+     * @return void
+     * @throws \coding_exception
+     * @codeCoverageIgnore TODO: Move this all to a form.
+     */
     public function handle_submission() {
-        // TODO: Move this all to a form.
         $table = required_param('table', PARAM_NOTAGS);
         $column = optional_param('column', '', PARAM_NOTAGS);
         $columns = optional_param('columns', '', PARAM_NOTAGS);

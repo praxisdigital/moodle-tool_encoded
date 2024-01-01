@@ -50,7 +50,7 @@ class records extends base {
      * @return lang_string
      */
     protected function get_default_entity_title(): lang_string {
-        return new lang_string('encoderlog', 'tool_encoded');
+        return new lang_string('encoderentity', 'tool_encoded');
     }
 
     /**

@@ -1,5 +1,5 @@
 <?php
-// This file is part of The Course Module Navigation Block
+// This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,24 +14,28 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace tool_encoded\privacy;
+namespace tool_encoded\local\systemreports;
+
+use context_system;
+use core_reportbuilder\system_report_factory;
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
- * Admin tool encoded privacy provider.
+ * Unit tests.
  *
  * @package   tool_encoded
  * @copyright 2023 Mathew May <mathew.solutions>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers    tool_encoded\local\systemreports\records
  */
-class provider implements \core_privacy\local\metadata\null_provider {
-    /**
-     * Get the language string identifier with the component's language
-     * file to explain why this plugin stores no data.
-     *
-     * @codeCoverageIgnore Null provider so no point.
-     * @return  string
-     */
-    public static function get_reason() : string {
-        return 'privacy:metadata';
+class records_test extends \advanced_testcase {
+    public function test_records() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $records = system_report_factory::create(records::class, context_system::instance());
+        $this->assertInstanceOf(records::class, $records);
+        $records->get_name();
+        $this->assertEquals('Encoder log', $records->get_name());
     }
 }
