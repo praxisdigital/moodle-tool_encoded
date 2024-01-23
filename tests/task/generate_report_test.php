@@ -38,7 +38,7 @@ class generate_report_test extends \advanced_testcase {
      * @param array $records The expected records.
      * @return void
      */
-    public function test_task( $table,  $columns,  $records): void {
+    public function test_task($table,  $columns,  $records): void {
         global $DB;
         $this->resetAfterTest();
         $recordid = $DB->insert_record($table, [
@@ -48,24 +48,15 @@ class generate_report_test extends \advanced_testcase {
             'feedbackauthor' => '<p>Bad data &lt;img alt="" src="data:image/gif;base64,R0lGODdhAQABAPAAAP8AAAAAACwAAAAAAQABAAACAkQBADs=" /&gt;</p>',
         ]);
 
-
         $task = new generate_report();
         $task->set_custom_data([
             'table' => $table,
             'columns' => $columns,
         ]);
         $task->queue($table, $columns);
-        $sink = $this->redirectMessages();
-        ob_start();
         $task->execute();
         $this->runAdhocTasks('\tool_encoded\task\generate_report');
-        $output = ob_get_contents();
-        ob_end_clean();
-        $sink->close();
         $this->assertInstanceOf(generate_report::class, $task);
-        $this->assertTrue(str_contains($output, 'cyberpunk'));
-
-        $result = $DB->get_records('tool_encoded_potential_records');
 
         // Set method accessibility.
         $method = new ReflectionMethod(generate_report::class, 'search_columns');
@@ -103,7 +94,7 @@ class generate_report_test extends \advanced_testcase {
                     'report_table' => 'workshop_assessments',
                     'report_columns' => 'feedbackauthor',
                     'migrated' => 0,
-                    'link_fragment' => '/workshop/assessments',
+                    'cmid' => 0,
                 ]
             ],
         ];

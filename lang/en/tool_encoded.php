@@ -29,15 +29,11 @@ $string['displayreport'] = 'Display report';
 $string['sizesetting'] = 'Size setting';
 $string['sizesettingdesc'] = 'The size in kilobytes to flag in the generated report.';
 
-// Index strings.
-$string['falseaction'] = 'The selected action does not exist.';
-
 // Generate page strings.
-$string['allcolumns'] = 'All found columns ({$a})';
-$string['columns'] = 'Column ({$a})';
-$string['generatefor'] = 'Generate report for:';
-$string['generateheader'] = 'Tables that may have issues: ({$a})';
-$string['generatesubheader'] = 'Click a table name to view potential columns and chose an action.';
+$string['recordsfound'] = 'Records found';
+$string['recordsfoundnotfound'] = 'No records found';
+$string['queuetable'] = 'Queue task for all columns';
+$string['queuealltables'] = 'Queue generation tasks for all ({$a}) tables';
 
 // RB strings.
 $string['encoderlog'] = 'Encoder log';

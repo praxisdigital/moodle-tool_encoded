@@ -43,16 +43,14 @@ class behat_tool_encoded extends behat_base {
     /**
      * A generate a report for the given table and columns.
      *
-     * @Given /^I generate a report for "([^"]*)" and "([^"]*)" columns$/
+     * @Given /^I generate a report for "([^"]*)"$/
      * @param string $table
-     * @param string $columns
      */
-    public function i_generate_a_report_for_and_columns(string $table, string $columns) {
+    public function i_generate_a_report_for_and_columns(string $table) {
         $this->execute('behat_navigation::i_navigate_to_in_site_administration',
             "Plugins > Admin tools > Base64 Encoder > Generate report"
         );
-        $this->execute('behat_forms::press_button', $table);
-        $this->execute('behat_general::click_link', $columns);
+        $this->execute('behat_forms::press_button', $table . '_generate');
 
         $this->execute('behat_general::i_wait_to_be_redirected');
         $this->execute('behat_general::i_trigger_cron');

@@ -45,8 +45,9 @@ class generate_test extends \advanced_testcase {
         $fetchedcount = count($fetchedtables);
         // Confirm the export for template returns the correct data structure.
         $this->assertEquals([
-            'tables' => $fetchedtables,
+            'tables' => array_values($fetchedtables),
             'count' => $fetchedcount,
+            'sesskey' => sesskey(),
         ], $generate->export_for_template($renderer));
 
         // Confirm we have reduced the subset of tables to only those with format columns.
@@ -80,68 +81,62 @@ class generate_test extends \advanced_testcase {
                         'columns' => [
                             [
                                 'name' => 'content',
-                                'link' => '?action=generate&testing=submit&table=book_chapters&column=content#',
                             ]
                         ],
-                        'colcount' => 1,
                         'all' => 'content',
-                        'alllink' => '?action=generate&testing=submit&table=book_chapters&columns=content#',
-                    ],
+                        'reportstatus' => false,
+                        'link' => 'https://www.example.com/moodle/admin/tool/encoded/index.php',
+
+                ],
                     [
                         'name' => 'workshop_assessments',
                         'columns' => [
                             [
                                 'name' => 'feedbackauthor',
-                                'link' => '?action=generate&testing=submit&table=workshop_assessments&column=feedbackauthor#',
                             ],
                             [
                                 'name' => 'feedbackreviewer',
-                                'link' => '?action=generate&testing=submit&table=workshop_assessments&column=feedbackreviewer#',
                             ]
                         ],
-                        'colcount' => 2,
                         'all' => 'feedbackauthor,feedbackreviewer',
-                        'alllink' => '?action=generate&testing=submit&table=workshop_assessments&columns=feedbackauthor%2Cfeedbackreviewer#',
+                        'reportstatus' => false,
+                        'link' => 'https://www.example.com/moodle/admin/tool/encoded/index.php',
                     ],
                     [
                         'name' => 'label',
                         'columns' => [
                             [
                                 'name' => 'intro',
-                                'link' => '?action=generate&testing=submit&table=label&column=intro#',
                             ]
                         ],
-                        'colcount' => 1,
                         'all' => 'intro',
-                        'alllink' => '?action=generate&testing=submit&table=label&columns=intro#',
+                        'reportstatus' => false,
+                        'link' => 'https://www.example.com/moodle/admin/tool/encoded/index.php',
                     ],
                     [
                         'name' => 'question_answers',
                         'columns' => [
                             [
                                 'name' => 'answer',
-                                'link' => '?action=generate&testing=submit&table=question_answers&column=answer#',
                             ],
                             [
                                 'name' => 'feedback',
-                                'link' => '?action=generate&testing=submit&table=question_answers&column=feedback#',
                             ]
                         ],
-                        'colcount' => 2,
                         'all' => 'answer,feedback',
-                        'alllink' => '?action=generate&testing=submit&table=question_answers&columns=answer%2Cfeedback#',
+                        'reportstatus' => false,
+                        'link' => 'https://www.example.com/moodle/admin/tool/encoded/index.php',
                     ],
                     [
                         'name' => 'forum_posts',
                         'columns' => [
                             [
                                 'name' => 'message',
-                                'link' => '?action=generate&testing=submit&table=forum_posts&column=message#',
                             ]
                         ],
-                        'colcount' => 1,
                         'all' => 'message',
-                        'alllink' => '?action=generate&testing=submit&table=forum_posts&columns=message#',
+                        'reportstatus' => false,
+                        'link' => 'https://www.example.com/moodle/admin/tool/encoded/index.php',
                     ],
                 ],
             ],

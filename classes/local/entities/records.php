@@ -40,8 +40,10 @@ class records extends base {
      *
      * @return array
      */
-    protected function get_default_table_aliases(): array {
-        return ['tool_encoded_potential_records' => 'b64pr'];
+    protected function get_default_tables(): array {
+        return [
+            'tool_encoded_potential_records'
+        ];
     }
 
     /**

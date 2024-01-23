@@ -19,6 +19,7 @@ namespace tool_encoded\local\entities;
 use context_system;
 use core_reportbuilder\system_report_factory;
 use \tool_encoded\local\systemreports\records as recordsreport;
+use tool_encoded\task\generate_report;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,8 +36,30 @@ class records_test extends \advanced_testcase {
      * @return void
      */
     public function test_records(): void {
-        $this->resetAfterTest(true);
+        global $DB;
+        $this->resetAfterTest();
         $this->setAdminUser();
+
+        $DB->insert_record('workshop_assessments', [
+            'submissionid' => '2',
+            'reviewerid' => '2',
+            'weight' => '1',
+            'feedbackauthor' => '<p>Bad data &lt;img alt="" src="data:image/gif;base64,R0lGODdhAQABAPAAAP8AAAAAACwAAAAAAQABAAACAkQBADs=" /&gt;</p>',
+        ]);
+
+        $task = new generate_report();
+        $task->set_custom_data([
+            'table' => 'workshop_assessments',
+            'columns' => 'feedbackauthor',
+        ]);
+        $task->execute();
+        $task = new generate_report();
+        $task->set_custom_data([
+            'table' => 'workshop_assessments',
+            'columns' => 'feedbackauthor,feedbackreviewer',
+        ]);
+        $task->execute();
+
         $records = system_report_factory::create(recordsreport::class, context_system::instance());
 
         $records->get_filters();

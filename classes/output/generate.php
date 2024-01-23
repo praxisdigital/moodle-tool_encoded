@@ -27,21 +27,12 @@ namespace tool_encoded\output;
 use renderable;
 use renderer_base;
 use templatable;
-use tool_encoded\task\generate_report;
 
 class generate implements templatable, renderable {
 
     protected $potentialtables = [];
 
-    public $template = 'tool_encoded/generate';
-
     public function __construct() {
-        $action = optional_param('testing', '', PARAM_ALPHA);
-        if ($action === 'submit') {
-            // @codeCoverageIgnoreStart
-            $this->handle_submission();
-            // @codeCoverageIgnoreEnd
-        }
         $this->potentialtables = $this->fetch_tables();
     }
 
@@ -49,6 +40,7 @@ class generate implements templatable, renderable {
         global $DB;
 
         $potentialtables = [];
+        $link = new \moodle_url('/admin/tool/encoded/index.php');
 
         // Cached fetch;
         $tables = $DB->get_tables();
@@ -57,59 +49,42 @@ class generate implements templatable, renderable {
             $tablecols = $DB->get_columns($table);
             $allcols = [];
             foreach ($tablecols as $column) {
-                $urlparams = [
-                    'action' => 'generate',
-                    'testing' => 'submit',
-                    'table' => $table,
-                ];
                 // Only convert columns that are either text or long varchar.
                 if ($column->meta_type == 'X' || ($column->meta_type == 'C' && $column->max_length > 255)) {
                     // We only want fields that have an associated format col as they are editable by the user.
                     if (array_key_exists($column->name.'format', $tablecols)) {
                         $allcols[] = $column->name;
-                        $urlparams['column'] = $column->name;
-                        $link = new \moodle_url('#', $urlparams);
                         $potentialcolumns[] = [
                             'name' => $column->name,
-                            'link' => $link->out(false),
                         ];
                     }
                 }
             }
-            unset($urlparams['column']);
-            $urlparams['columns'] = implode(',', $allcols);
-            $cal = new \moodle_url('#', $urlparams);
             if (!empty($potentialcolumns)) {
+                $all = implode(',', $allcols);
+                // Check if we have any records for this table.
+                $reportrun = $DB->record_exists_select(
+                    'tool_encoded_potential_records',
+                    'report_table = ? and report_columns = ?',
+                    [$table, $all]
+                );
                 $potentialtables[$table] = [
                     'name' => $table,
                     'columns' => $potentialcolumns,
-                    'colcount' => count($potentialcolumns),
-                    'all' => implode(',', $allcols),
-                    'alllink' => $cal->out(false),
+                    'reportstatus' => $reportrun,
+                    'all' => $all,
+                    'link' => $link->out(false),
                 ];
             }
         }
         return $potentialtables;
     }
 
-    /**
-     * @return void
-     * @throws \coding_exception
-     * @codeCoverageIgnore TODO: Move this all to a form.
-     */
-    public function handle_submission() {
-        $table = required_param('table', PARAM_NOTAGS);
-        $column = optional_param('column', '', PARAM_NOTAGS);
-        $columns = optional_param('columns', '', PARAM_NOTAGS);
-
-        $parsedcols = $column !== '' ? $column : $columns;
-        generate_report::queue($table, $parsedcols);
-    }
-
     public function export_for_template(renderer_base $output) {
         return [
-            'tables' => $this->potentialtables,
+            'tables' => array_values($this->potentialtables),
             'count' => count($this->potentialtables),
+            'sesskey' => sesskey(),
         ];
     }
 }

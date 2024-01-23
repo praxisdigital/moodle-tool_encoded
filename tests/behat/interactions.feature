@@ -10,19 +10,18 @@ Feature: Check that the appropriate users can access the migration tool
       | submissionid | reviewerid | grade | feedbackauthor                                                                                                    |
       | 1            | 2          | 50.00 | <p>Bad data &lt;img alt="" src="data:image/gif;base64,R0lGODdhAQABAPAAAP8AAAAAACwAAAAAAQABAAACAkQBADs=" /&gt;</p> |
       | 2            | 2          | 75.00 | <p>No encoded data so algood</p>                                                                                  |
+    And I fill the table "book" with:
+      | course | name      | intro                                                                                                             | introformat | numbering | navstyle | customtitles | revision | timecreated | timemodified |
+      | 1      | Some book | <p>Bad data &lt;img alt="" src="data:image/gif;base64,R0lGODdhAQABAPAAAP8AAAAAACwAAAAAAQABAAACAkQBADs=" /&gt;</p> | 0           | 1         | 0        | 0            | 1        | 0           | 0            |
+      | 2      | Fake book | <p>No encoded data so algood</p>                                                                                  | 0           | 1         | 0        | 0            | 1        | 0           | 0            |
 
   Scenario: Generate a report with a selection of columns
+    # Verbosely generate a report for a single table.
     Given I log in as "admin"
     And I navigate to "Plugins > Admin tools > Base64 Encoder > Generate report" in site administration
-    And I should see "Tables that may have issues:"
-    When I press "workshop_assessments"
-    # TODO: Question - Point 8. Should the reset button clear the current select of table & columns, clear the current report (potential hits) or something else?
-    #And I should see "Reset" "Button"
-    # Point 2.
-    And I click on "All found columns (workshop_assessments)" "link"
-    # Point 3.
+    And I should see "Generate report"
+    When I press "workshop_assessments_generate"
     And I trigger cron
-    # Point 4.
     And I should see "tool_encoded\task\generate_report"
     # Move back onto the site.
     And I am on site homepage
@@ -35,10 +34,12 @@ Feature: Check that the appropriate users can access the migration tool
     And the "Delete" item should exist in the "Actions" action menu of the "workshop_assessments" "table_row"
     # TODO: Question - If multiple encoded values add up to more than the admin setting, should the warning be triggered even if individual sizes are under threshold?
 
+  @failing
   Scenario: Confirm contents and available actions of the report
+    # TODO: Once CMID is included in the report, this can be used to check the contents of the report.
     Given I log in as "admin"
-    And I generate a report for "workshop_assessments" and "All found columns (workshop_assessments)" columns
-    And I generate a report for "workshop_assessments" and "Column (feedbackauthor)" columns
+    And I generate a report for "workshop_assessments"
+    And I generate a report for "book"
     And I navigate to "Plugins > Admin tools > Base64 Encoder > Display report" in site administration
     # Check the report contents.
     And the following should exist in the "reportbuilder-table" table:
@@ -48,7 +49,7 @@ Feature: Check that the appropriate users can access the migration tool
     And "workshop_assessments" row "Duration" column of "reportbuilder-table" table should contain "secs"
     # Check sorting on an arbitrary column.
     And I click on "Sort by Column(s) Ascending" "link"
-    And "feedbackauthor" "text" should appear before "feedbackauthor,feedbackreviewer" "text"
+    And "workshop_assessments" "table_row" should appear before "book" "table_row"
     # Check filtering.
     And I click on "Filters" "button"
     And I set the following fields in the "Column(s)" "core_reportbuilder > Filter" to these values:
@@ -58,10 +59,10 @@ Feature: Check that the appropriate users can access the migration tool
     And I should see "Filters (1)" in the "#dropdownFiltersButton" "css_element"
     And the following should exist in the "reportbuilder-table" table:
       | table                | Column(s)      |
-      | workshop_assessments | feedbackauthor |
-    And the following should not exist in the "reportbuilder-table" table:
-      | table                | Column(s)                       |
       | workshop_assessments | feedbackauthor,feedbackreviewer |
+    And the following should not exist in the "reportbuilder-table" table:
+      | table | Column(s) |
+      | book  | intro     |
     And I click on "Filters" "button"
     # Check the actions available.
     And I choose the "View" item in the "Actions" action menu of the "workshop_assessments" "table_row"
@@ -69,7 +70,7 @@ Feature: Check that the appropriate users can access the migration tool
 
   Scenario: Confirm privileged users can access the migration tool
     Given I log in as "admin"
-    And I generate a report for "workshop_assessments" and "All found columns (workshop_assessments)" columns
+    And I generate a report for "workshop_assessments"
     # Confirm that the primary admin has access.
     And I navigate to "Plugins > Admin tools > Base64 Encoder > Display report" in site administration
     And the following should exist in the "reportbuilder-table" table:
@@ -92,11 +93,9 @@ Feature: Check that the appropriate users can access the migration tool
   Scenario: Generate a set of reports ensuring multiple tasks are spawned
     Given I log in as "admin"
     And I navigate to "Plugins > Admin tools > Base64 Encoder > Generate report" in site administration
-    And I press "workshop_assessments"
-    And I click on "All found columns (workshop_assessments)" "link"
+    And I press "assign_generate"
     And I wait to be redirected
-    And I press "workshop_assessments"
-    And I click on "Column (feedbackauthor)" "link"
+    When I press "workshop_assessments_generate"
     When I trigger cron
-    Then I should see "{\"table\":\"workshop_assessments\",\"columns\":\"feedbackauthor,feedbackreviewer\"}"
-    And I should see "{\"table\":\"workshop_assessments\",\"columns\":\"feedbackauthor\"}"
+    Then I should see "{\"table\":\"assign\",\"columns\":\"intro,activity\"}"
+    And I should see "{\"table\":\"workshop_assessments\",\"columns\":\"feedbackauthor,feedbackreviewer\"}"

@@ -18,6 +18,7 @@ namespace tool_encoded\local\systemreports;
 
 use context_system;
 use core_reportbuilder\system_report_factory;
+use tool_encoded\task\generate_report;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,11 +32,46 @@ defined('MOODLE_INTERNAL') || die();
  */
 class records_test extends \advanced_testcase {
     public function test_records() {
-        $this->resetAfterTest(true);
+        global $DB;
+        $this->resetAfterTest();
         $this->setAdminUser();
+
+        $DB->insert_record('workshop_assessments', [
+            'submissionid' => '2',
+            'reviewerid' => '2',
+            'weight' => '1',
+            'feedbackauthor' => '<p>Bad data &lt;img alt="" src="data:image/gif;base64,R0lGODdhAQABAPAAAP8AAAAAACwAAAAAAQABAAACAkQBADs=" /&gt;</p>',
+        ]);
+
+        $task = new generate_report();
+        $task->set_custom_data([
+            'table' => 'workshop_assessments',
+            'columns' => 'feedbackauthor',
+        ]);
+        $task->execute();
+        $task = new generate_report();
+        $task->set_custom_data([
+            'table' => 'workshop_assessments',
+            'columns' => 'feedbackauthor,feedbackreviewer',
+        ]);
+        $task->execute();
+
         $records = system_report_factory::create(records::class, context_system::instance());
         $this->assertInstanceOf(records::class, $records);
-        $records->get_name();
         $this->assertEquals('Encoder log', $records->get_name());
+
+        //'records:pid' => core_reportbuilder\local\report\column Object (...)
+        //'records:report_table' => core_reportbuilder\local\report\column Object (...)
+        //'records:report_columns' => core_reportbuilder\local\report\column Object (...)
+        //'records:native_id' => core_reportbuilder\local\report\column Object (...)
+        //'records:encoded_size' => core_reportbuilder\local\report\column Object (...)
+        //'records:mimetype' => core_reportbuilder\local\report\column Object (...)
+        //'records:migrated' => core_reportbuilder\local\report\column Object (...)
+        //'task_log:duration' => core_reportbuilder\local\report\column Object (...)
+        //$this->assertEquals([], $records->get_columns());
+
+        //0 => core_reportbuilder\local\report\action Object (...)
+        //1 => core_reportbuilder\local\report\action Object (...)
+        //$this->assertEquals([], $records->get_actions());
     }
 }

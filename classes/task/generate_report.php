@@ -52,7 +52,6 @@ class generate_report extends adhoc_task {
         $records = $this->search_columns($data->table, $data->columns);
         // Make a deep clone of the records just in case other functions need the raw data.
         $preppedrecords = $this->extend_records(unserialize(serialize($records)));
-        mtrace('cyberpunk');
         $DB->insert_records('tool_encoded_potential_records', $preppedrecords);
     }
 

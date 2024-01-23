@@ -22,8 +22,11 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\notification;
 use core_reportbuilder\system_report_factory;
 use tool_encoded\local\systemreports\records;
+use tool_encoded\output\generate;
+use tool_encoded\task\generate_report;
 
 require_once(__DIR__ . '/../../../config.php');
 
@@ -37,32 +40,39 @@ if (!$context = context_system::instance()) {
 
 require_capability('moodle/site:configview', $context);
 
-// Loads the required action class and form.
-$classname = 'tool_encoded\\output\\'.$action;
-
-if (!class_exists($classname) && $action !== 'report') {
-    throw new moodle_exception('falseaction', 'tool_encoded', $action);
-}
-
 $url = new moodle_url('/admin/tool/encoded/index.php');
 
 // Display the page.
 $PAGE->set_context(context_system::instance());
 $PAGE->set_url($url);
+$PAGE->set_title('Encoded tool');
 $PAGE->set_pagelayout('admin');
-// TODO: Change title and heading.
-$PAGE->set_title('title example');
-$PAGE->set_heading('heading example');
 
-echo $OUTPUT->header();
+if (data_submitted() && confirm_sesskey()) {
+    $form = data_submitted();
+    // Override the action since a form was submitted just in case.
+    $action = $form->action;
+    if ($action === 'generate') {
+        if (isset($form->all) && (bool) $form->all === true) {
+            //generate_report::queue($form->table, $form->columns);
+        } else {
+            generate_report::queue($form->table, $form->columns);
+        }
+        echo notification::success('Report generation queued.');
+    }
+}
+
 if ($action === 'report') {
+    $PAGE->set_heading('Found records');
+    echo $OUTPUT->header();
     $report = system_report_factory::create(records::class, context_system::instance());
     echo $report->output();
 } else {
-    // Executes the required action.
-    $instance = new $classname();
+    $PAGE->set_heading('Generate report');
+    echo $OUTPUT->header();
+    $instance = new generate();
     // Example of way to load different functionality based on the desired action.
-    echo $OUTPUT->render_from_template($instance->template, $instance->export_for_template($OUTPUT));
+    echo $OUTPUT->render_from_template('tool_encoded/generate', $instance->export_for_template($OUTPUT));
 }
 
 echo $OUTPUT->footer();
