@@ -64,7 +64,8 @@ class generate_report extends adhoc_task {
      */
     private function search_columns(string $table, string $columns): array {
         global $DB;
-        // Get the content of the requested table return only columns and an ID.
+        // Get the content of the requested table return only columns and an ID and attempt the cmid.
+        // TODO: Add CMID.
         $records = $DB->get_records($table, null, null, 'id,'.$columns);
 
         return array_filter($records, function($record) {
@@ -81,8 +82,9 @@ class generate_report extends adhoc_task {
     private function extend_records(array $records): array {
         return array_map(function($record) {
             $cleanrecord = new \stdClass();
-            // TODO: Improve regex & Handle the case where there are multiple base64 matches
+            // TODO: Improve regex.
             $base64 = preg_grep('/data:([^"]+)*/', (array) $record);
+            // Future improvement: Handle the case where there are multiple base64 matches.
             foreach ($base64 as $value) {
                 preg_match('/data:(.*?);/', $value,$matches);
                 $cleanrecord->encoded_size = strlen(base64_decode($value));
@@ -93,9 +95,16 @@ class generate_report extends adhoc_task {
             $cleanrecord->report_table = $this->get_custom_data()->table;
             $cleanrecord->report_columns = $this->get_custom_data()->columns;
             $cleanrecord->migrated = 0;
+            $cleanrecord->cmid = $record->cmid ?? 0;
 
-            $cleanrecord->link_fragment = $this->link_slug_guess($this->get_custom_data()->table);
-
+            //$context = \context::instance_by_id($record->cmid);
+            //$cleanrecord->link_fragment = match ($context->get_context_name()) {
+            //    'course_section', 'course_category', 'course' => $this->link_slug_guess($this->get_custom_data()->table, 'course'),
+            //    'course_module' => $this->link_slug_guess($this->get_custom_data()->table, 'mod'),
+            //    'user' => $this->link_slug_guess($this->get_custom_data()->table, 'user'),
+            //    default => $this->link_slug_guess($this->get_custom_data()->table),
+            //};
+            $this->link_slug_guess($this->get_custom_data()->table);
             return $cleanrecord;
         }, $records);
     }
@@ -106,7 +115,7 @@ class generate_report extends adhoc_task {
      * @param string $table The table name.
      * @return string
      */
-    private function link_slug_guess(string $table): string {
+    private function link_slug_guess(string $table, $level = ''): string {
         $table = str_replace('_', '/', $table);
         $slug = '/'.$table;
         return $slug;

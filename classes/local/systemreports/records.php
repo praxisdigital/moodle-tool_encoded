@@ -48,12 +48,13 @@ class records extends system_report {
         $this->add_base_fields("{$entitymainalias}.link_fragment");
         $this->add_base_fields("{$entitymainalias}.native_id");
 
-        $entityuser = new task_log();
-        $entittlalias = $entityuser->get_table_alias('task_log');
-        $this->add_entity($entityuser->add_join(
-            "LEFT JOIN {task_log} {$entittlalias} ON {$entittlalias}.pid = {$entitymainalias}.pid"
+        $entitytl = new task_log();
+        $entitytlalias = $entitytl->get_table_alias('task_log');
+        $this->add_entity($entitytl->add_join(
+            "JOIN {task_log} {$entitytlalias} ON {$entitytlalias}.pid = {$entitymainalias}.pid"
         ));
-        $this->add_base_condition_sql("{$entittlalias}.component = 'tool_encoded'");
+        // TODO: Add the user id to the encoded table to group by the actual user and not the task runner ID.
+        $this->add_base_condition_sql("{$entitytlalias}.component = 'tool_encoded' GROUP BY {$entitytlalias}.userid");
 
         // Now we can call our helper methods to add the content we want to include in the report.
         $this->add_columns();
@@ -96,7 +97,7 @@ class records extends system_report {
             'records:migrated',
             'task_log:duration'
         ]);
-        $this->set_initial_sort_column('records:pid', SORT_ASC);
+        $this->set_initial_sort_column('records:report_table', SORT_ASC);
     }
 
     /**
@@ -116,22 +117,28 @@ class records extends system_report {
         ]);
     }
 
+    public function row_callback(\stdclass $row): void {
+        $guessedlink = new moodle_url($row->link_fragment.'.php', ['id' => $row->native_id]);
+        $row->guessedlink = $guessedlink->out(false);
+    }
+
+    // TODO: Update this when unique records are fetched.
     /**
      * Add the system report actions. An extra column will be appended to each row, containing all actions added here
      */
     protected function add_actions(): void {
-        // TODO: Only params get the rewrite annoyingly.
         $this->add_action((new action(
-            new moodle_url(':link_fragment', ['id' => ':native_id']),
+            new moodle_url('#'),
             new pix_icon('t/viewdetails', ''),
-            [],
+            ['data-action' => ':guessedlink'],
             false,
             new lang_string('view'),
         )));
+        // Make some educated guesses on what the delete link should contain.
         $this->add_action((new action(
-            new moodle_url('/admin/tool/base64encode/report.php'),
+            new moodle_url('#'),
             new pix_icon('i/delete', ''),
-            [],
+            ['id' => ':nativeid', 'cmid' => ':cmid', 'name' => 'delete', 'value' => true],
             false,
             new lang_string('delete'),
         )));

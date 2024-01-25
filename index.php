@@ -27,6 +27,7 @@ use core_reportbuilder\system_report_factory;
 use tool_encoded\local\systemreports\records;
 use tool_encoded\output\generate;
 use tool_encoded\task\generate_report;
+use tool_encoded\local\helper;
 
 require_once(__DIR__ . '/../../../config.php');
 
@@ -54,20 +55,23 @@ if (data_submitted() && confirm_sesskey()) {
     $action = $form->action;
     if ($action === 'generate') {
         if (isset($form->all) && (bool) $form->all === true) {
-            //generate_report::queue($form->table, $form->columns);
+            helper::spawnReportTasks();
         } else {
             generate_report::queue($form->table, $form->columns);
         }
+        // TODO: String.
         echo notification::success('Report generation queued.');
     }
 }
 
 if ($action === 'report') {
+    // TODO: String.
     $PAGE->set_heading('Found records');
     echo $OUTPUT->header();
     $report = system_report_factory::create(records::class, context_system::instance());
     echo $report->output();
 } else {
+    // TODO: String.
     $PAGE->set_heading('Generate report');
     echo $OUTPUT->header();
     $instance = new generate();

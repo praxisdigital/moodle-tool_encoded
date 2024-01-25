@@ -27,6 +27,7 @@ namespace tool_encoded\output;
 use renderable;
 use renderer_base;
 use templatable;
+use tool_encoded\local\helper;
 
 class generate implements templatable, renderable {
 
@@ -37,47 +38,8 @@ class generate implements templatable, renderable {
     }
 
     public function fetch_tables(): array {
-        global $DB;
-
-        $potentialtables = [];
         $link = new \moodle_url('/admin/tool/encoded/index.php');
-
-        // Cached fetch;
-        $tables = $DB->get_tables();
-        foreach ($tables as $table) {
-            $potentialcolumns = [];
-            $tablecols = $DB->get_columns($table);
-            $allcols = [];
-            foreach ($tablecols as $column) {
-                // Only convert columns that are either text or long varchar.
-                if ($column->meta_type == 'X' || ($column->meta_type == 'C' && $column->max_length > 255)) {
-                    // We only want fields that have an associated format col as they are editable by the user.
-                    if (array_key_exists($column->name.'format', $tablecols)) {
-                        $allcols[] = $column->name;
-                        $potentialcolumns[] = [
-                            'name' => $column->name,
-                        ];
-                    }
-                }
-            }
-            if (!empty($potentialcolumns)) {
-                $all = implode(',', $allcols);
-                // Check if we have any records for this table.
-                $reportrun = $DB->record_exists_select(
-                    'tool_encoded_potential_records',
-                    'report_table = ? and report_columns = ?',
-                    [$table, $all]
-                );
-                $potentialtables[$table] = [
-                    'name' => $table,
-                    'columns' => $potentialcolumns,
-                    'reportstatus' => $reportrun,
-                    'all' => $all,
-                    'link' => $link->out(false),
-                ];
-            }
-        }
-        return $potentialtables;
+        return helper::getPotentialtables($link);
     }
 
     public function export_for_template(renderer_base $output) {
