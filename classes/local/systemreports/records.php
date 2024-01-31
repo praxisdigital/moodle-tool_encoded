@@ -47,6 +47,7 @@ class records extends system_report {
         // Any columns required by actions should be defined here to ensure they're always available.
         $this->add_base_fields("{$entitymainalias}.link_fragment");
         $this->add_base_fields("{$entitymainalias}.native_id");
+        $this->add_base_fields("{$entitymainalias}.cmid");
 
         $entitytl = new task_log();
         $entitytlalias = $entitytl->get_table_alias('task_log');
@@ -92,6 +93,7 @@ class records extends system_report {
             'records:report_table',
             'records:report_columns',
             'records:native_id',
+            'records:cmid',
             'records:encoded_size',
             'records:mimetype',
             'records:migrated',
@@ -113,12 +115,13 @@ class records extends system_report {
             'records:encoded_size',
             'records:mimetype',
             'records:migrated',
-            'records:pid'
+            'records:pid',
+            'records:cmid'
         ]);
     }
 
     public function row_callback(\stdclass $row): void {
-        $guessedlink = new moodle_url($row->link_fragment.'.php', ['id' => $row->native_id]);
+        $guessedlink = new moodle_url($row->link_fragment, ['id' => $row->native_id]);
         $row->guessedlink = $guessedlink->out(false);
     }
 

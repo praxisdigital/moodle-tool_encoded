@@ -27,7 +27,6 @@ Feature: Find potential records that need to be migrated and action as appropria
 #    # Lower the warning threshold to 5Kb for testing purposes.
 #    And the following config values are set as admin:
 #      | size | 5 | tool_encode |
-#    # TODO: Add a record that is larger than 5Kb.
 #    And I fill the table "workshop_assessments" with:
 #      | submissionid | reviewerid | grade | feedbackauthor                                                                                                        |
 #      | 3            | 2          | 10.00 | <p>Bad big data &lt;img alt="" src="data:image/gif;base64,R0lGODdhAQABAPAAAP8AAAAAACwAAAAAAQABAAACAkQBADs=" /&gt;</p> |

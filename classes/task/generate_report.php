@@ -16,6 +16,8 @@
 
 namespace tool_encoded\task;
 
+require_once($CFG->dirroot . '/course/lib.php');
+
 use core\task\adhoc_task;
 use core\task\manager;
 
@@ -47,9 +49,7 @@ class generate_report extends adhoc_task {
      */
     public function execute(): void {
         global $DB;
-        // Initialize the custom data operation to be used for the action.
-        $data = $this->get_custom_data();
-        $records = $this->search_columns($data->table, $data->columns);
+        $records = $this->search_columns();
         // Make a deep clone of the records just in case other functions need the raw data.
         $preppedrecords = $this->extend_records(unserialize(serialize($records)));
         $DB->insert_records('tool_encoded_potential_records', $preppedrecords);
@@ -57,16 +57,11 @@ class generate_report extends adhoc_task {
 
     /**
      * Search the columns of a table for base64 encoded data.
-     *
-     * @param string $table The table to search.
-     * @param string $columns The columns to search.
      * @return array
      */
-    private function search_columns(string $table, string $columns): array {
+    private function search_columns(): array {
         global $DB;
-        // Get the content of the requested table return only columns and an ID and attempt the cmid.
-        // TODO: Add CMID.
-        $records = $DB->get_records($table, null, null, 'id,'.$columns);
+        $records = $DB->get_records($this->get_custom_data()->table, null, null);
 
         return array_filter($records, function($record) {
             return preg_grep('/data:([^"]+)*/', (array) $record);
@@ -91,20 +86,12 @@ class generate_report extends adhoc_task {
                 $cleanrecord->mimetype = $matches[0];
             }
             $cleanrecord->native_id = (int) $record->id;
-            $cleanrecord->pid = $this->get_pid() ?? 0; // 0 indicates testing.
+            $cleanrecord->pid = $this->get_pid();
             $cleanrecord->report_table = $this->get_custom_data()->table;
             $cleanrecord->report_columns = $this->get_custom_data()->columns;
             $cleanrecord->migrated = 0;
             $cleanrecord->cmid = $record->cmid ?? 0;
-
-            //$context = \context::instance_by_id($record->cmid);
-            //$cleanrecord->link_fragment = match ($context->get_context_name()) {
-            //    'course_section', 'course_category', 'course' => $this->link_slug_guess($this->get_custom_data()->table, 'course'),
-            //    'course_module' => $this->link_slug_guess($this->get_custom_data()->table, 'mod'),
-            //    'user' => $this->link_slug_guess($this->get_custom_data()->table, 'user'),
-            //    default => $this->link_slug_guess($this->get_custom_data()->table),
-            //};
-            $this->link_slug_guess($this->get_custom_data()->table);
+            $cleanrecord->link_fragment = $this->link_slug_guess();
             return $cleanrecord;
         }, $records);
     }
@@ -112,12 +99,25 @@ class generate_report extends adhoc_task {
     /**
      * Take a table name and guess the link slug.
      *
-     * @param string $table The table name.
      * @return string
      */
-    private function link_slug_guess(string $table, $level = ''): string {
-        $table = str_replace('_', '/', $table);
-        $slug = '/'.$table;
+    private function link_slug_guess(): string {
+        $table = $this->get_custom_data()->table;
+        $tablerename = str_replace('_', '/', $table);
+        $guess = strtok($table, '_');
+        // This catches alot of the tables, we'll add some manual handling for other common areas manually.
+        if (in_array($guess, array_keys(get_module_types_names()))) {
+            $slug = '/mod/'.$tablerename.'/view.php';
+        } else if (strpos($guess, 'question') || strpos($guess, 'qtype')) {
+            // Assume it's a question and try to guess the slug.
+            $slug = '/question/edit.php';
+        } else if (strpos($guess, 'grade') || strpos($guess, 'grading') || strpos($guess, 'gradingform')) {
+            // It might be a grade item so lets go there.
+            $slug = '/grade/edit/tree/index.php';
+        } else {
+            // Throwing everything at the wall and just flat out guessing.
+            $slug = '/'.$tablerename;
+        }
         return $slug;
     }
 }

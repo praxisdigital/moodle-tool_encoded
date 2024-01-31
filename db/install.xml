@@ -8,6 +8,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="native_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The original ID of the record in its table."/>
+        <FIELD NAME="cmid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The CMID of the record in its table."/>
         <FIELD NAME="pid" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="Our task to get the meta info about the report."/>
         <FIELD NAME="link_fragment" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="A slug to build a URL to directly access the content."/>
         <FIELD NAME="report_table" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Table this record was found in."/>

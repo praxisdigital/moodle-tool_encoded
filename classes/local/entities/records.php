@@ -171,6 +171,17 @@ class records extends base {
             ->add_field("{$tablealias}.native_id")
             ->set_is_sortable(true)
             ->set_disabled_aggregation(['avg', 'count', 'countdistinct', 'max', 'min', 'sum']);
+
+        $columns[] = (new column(
+            'cmid',
+            new lang_string('cmid', 'tool_encoded'),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            ->set_type(column::TYPE_INTEGER)
+            ->add_field("{$tablealias}.cmid")
+            ->set_is_sortable(true)
+            ->set_disabled_aggregation(['avg', 'count', 'countdistinct', 'max', 'min', 'sum']);
         return $columns;
     }
 
@@ -272,6 +283,14 @@ class records extends base {
         ))
             ->add_joins($this->get_joins());
 
+        $filters[] = (new filter(
+            number::class,
+            'cmid',
+            new lang_string('cmid', 'tool_encoded'),
+            $this->get_entity_name(),
+            "{$tablealias}.cmid"
+        ))
+            ->add_joins($this->get_joins());
         return $filters;
     }
 }

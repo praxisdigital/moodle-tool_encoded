@@ -34,8 +34,10 @@ $string['recordsfound'] = 'Records found';
 $string['recordsfoundnotfound'] = 'No records found';
 $string['queuetable'] = 'Queue task for all columns';
 $string['queuealltables'] = 'Queue generation tasks for all ({$a}) tables';
+$string['generatenotification'] = 'Generation task queued';
 
 // RB strings.
+$string['cmid'] = 'Course module ID';
 $string['encoderlog'] = 'Encoder log';
 $string['encoderentity'] = 'Encoder entity';
 $string['size'] = '{$a} kb';

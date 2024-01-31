@@ -59,20 +59,17 @@ if (data_submitted() && confirm_sesskey()) {
         } else {
             generate_report::queue($form->table, $form->columns);
         }
-        // TODO: String.
-        echo notification::success('Report generation queued.');
+        echo notification::success(get_string('generatenotification', 'tool_encoded'));
     }
 }
 
 if ($action === 'report') {
-    // TODO: String.
-    $PAGE->set_heading('Found records');
+    $PAGE->set_heading(get_string('recordsfound', 'tool_encoded'));
     echo $OUTPUT->header();
     $report = system_report_factory::create(records::class, context_system::instance());
     echo $report->output();
 } else {
-    // TODO: String.
-    $PAGE->set_heading('Generate report');
+    $PAGE->set_heading(get_string('generatereport', 'tool_encoded'));
     echo $OUTPUT->header();
     $instance = new generate();
     // Example of way to load different functionality based on the desired action.

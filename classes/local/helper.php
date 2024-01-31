@@ -16,7 +16,7 @@
 
 /**
  * Helping functions for the encoded tool.
- * TODO: Needs unit testing.
+ * TODO: Needs unit testing, currently covered by Behat.
  *
  * @package   tool_encoded
  * @copyright 2023 Mathew May <mathew.solutions>
