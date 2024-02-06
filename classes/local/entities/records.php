@@ -42,7 +42,7 @@ class records extends base {
      */
     protected function get_default_tables(): array {
         return [
-            'tool_encoded_potential_records'
+            'tool_encoded_base64_records'
         ];
     }
 
@@ -83,7 +83,7 @@ class records extends base {
      * @return column[]
      */
     protected function get_all_columns(): array {
-        $tablealias = $this->get_table_alias('tool_encoded_potential_records');
+        $tablealias = $this->get_table_alias('tool_encoded_base64_records');
 
         // Table name column.
         $columns[] = (new column(
@@ -191,7 +191,7 @@ class records extends base {
      * @return filter[]
      */
     protected function get_all_filters(): array {
-        $tablealias = $this->get_table_alias('tool_encoded_potential_records');
+        $tablealias = $this->get_table_alias('tool_encoded_base64_records');
 
         $filters[] = (new filter(
             autocomplete::class,
@@ -204,7 +204,7 @@ class records extends base {
             ->set_options_callback(static function(): array {
                 global $DB;
                 $tables = $DB->get_fieldset_sql(
-                    'SELECT DISTINCT report_table FROM {tool_encoded_potential_records} ORDER BY report_table ASC'
+                    'SELECT DISTINCT report_table FROM {tool_encoded_base64_records} ORDER BY report_table ASC'
                 );
                 $options = [];
                 foreach ($tables as $table) {
@@ -225,7 +225,7 @@ class records extends base {
             ->set_options_callback(static function(): array {
                 global $DB;
                 $cols = $DB->get_fieldset_sql(
-                    'SELECT DISTINCT report_columns FROM {tool_encoded_potential_records} ORDER BY report_columns ASC'
+                    'SELECT DISTINCT report_columns FROM {tool_encoded_base64_records} ORDER BY report_columns ASC'
                 );
                 $options = [];
                 foreach ($cols as $col) {
@@ -246,7 +246,7 @@ class records extends base {
             ->set_options_callback(static function(): array {
                 global $DB;
                 $mimes = $DB->get_fieldset_sql(
-                    'SELECT DISTINCT mimetype FROM {tool_encoded_potential_records} ORDER BY mimetype ASC'
+                    'SELECT DISTINCT mimetype FROM {tool_encoded_base64_records} ORDER BY mimetype ASC'
                 );
                 $options = [];
                 foreach ($mimes as $mime) {

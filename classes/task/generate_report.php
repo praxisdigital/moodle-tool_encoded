@@ -52,7 +52,7 @@ class generate_report extends adhoc_task {
         $records = $this->search_columns();
         // Make a deep clone of the records just in case other functions need the raw data.
         $preppedrecords = $this->extend_records(unserialize(serialize($records)));
-        $DB->insert_records('tool_encoded_potential_records', $preppedrecords);
+        $DB->insert_records('tool_encoded_base64_records', $preppedrecords);
     }
 
     /**
