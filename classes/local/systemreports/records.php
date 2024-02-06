@@ -39,9 +39,9 @@ class records extends system_report {
     protected function initialise(): void {
         // Our main entity, it contains all the column definitions that we need.
         $entitymain = new record_entity();
-        $entitymainalias = $entitymain->get_table_alias('tool_encoded_potential_records');
+        $entitymainalias = $entitymain->get_table_alias('tool_encoded_base64_records');
 
-        $this->set_main_table('tool_encoded_potential_records', $entitymainalias);
+        $this->set_main_table('tool_encoded_base64_records', $entitymainalias);
         $this->add_entity($entitymain);
 
         // Any columns required by actions should be defined here to ensure they're always available.

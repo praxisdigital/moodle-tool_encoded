@@ -45,11 +45,11 @@ class migrate extends adhoc_task {
     public function execute(): void {
         global $DB;
         // TODO: Add condition for only selected records.
-        $records = $DB->get_records('tool_encoded_potential_records', null, null);
+        $records = $DB->get_records('tool_encoded_base64_records', null, null);
         foreach ($records as $record) {
             $record->migrated = $this->migrate_record($record);
             // Update the state of the record to indicate it has been migrated.
-            $DB->update_record('tool_encoded_potential_records', $record);
+            $DB->update_record('tool_encoded_base64_records', $record);
         }
     }
 

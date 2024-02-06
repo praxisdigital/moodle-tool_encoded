@@ -4,7 +4,7 @@
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="tool_encoded_potential_records" COMMENT="Output of ad-hoc tasks where suspected fields are stored.">
+    <TABLE NAME="tool_encoded_base64_records" COMMENT="Output of ad-hoc tasks where suspected fields are stored.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="native_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The original ID of the record in its table."/>

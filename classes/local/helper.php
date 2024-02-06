@@ -61,7 +61,7 @@ class helper {
             if (!empty($potentialcolumns)) {
                 // Check if we have any records for this table.
                 $reportrun = $DB->record_exists_select(
-                    'tool_encoded_potential_records',
+                    'tool_encoded_base64_records',
                     'report_table = ? and report_columns = ?',
                     [$table, $all]
                 );
