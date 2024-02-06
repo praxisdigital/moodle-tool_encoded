@@ -55,13 +55,16 @@ class generate_report extends adhoc_task {
      */
     public function execute(): void {
         global $DB;
+        $stime = time();
         $records = $this->search_columns();
         // Make a deep clone of the records just in case other functions need the raw data.
         $preppedrecords = $this->extend_records(unserialize(serialize($records)));
         $transaction = $DB->start_delegated_transaction();
         // Delete old report data. Restricting by column isn't neccesary as all relevant columns should be checked.
         $DB->delete_records('tool_encoded_base64_records', ['report_table' => $this->get_custom_data()->table]);
+        $DB->delete_records('tool_encoded_base64_tables', ['report_table' => $this->get_custom_data()->table]);
         $DB->insert_records('tool_encoded_base64_records', $preppedrecords);
+        $DB->insert_record('tool_encoded_base64_tables', $this->get_table_record($stime));
         $transaction->allow_commit();
     }
 
@@ -104,6 +107,21 @@ class generate_report extends adhoc_task {
             $cleanrecord->link_fragment = $this->link_slug_guess();
             return $cleanrecord;
         }, $records);
+    }
+
+    /**
+     * Creates a table record object.
+     *
+     * @param int $stime start time of task
+     * @return \stdClass table record
+     */
+    private function get_table_record(int $stime): \stdClass {
+        $tablerecord = new \stdClass();
+        $tablerecord->report_table = $this->get_custom_data()->table;
+        $tablerecord->report_columns = $this->get_custom_data()->columns;
+        $tablerecord->last_checked = $stime;
+        $tablerecord->duration = (time() - $stime);
+        return $tablerecord;
     }
 
     /**

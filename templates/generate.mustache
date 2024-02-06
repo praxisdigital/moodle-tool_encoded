@@ -65,6 +65,8 @@
             <th scope="col">{{#str}}table, tool_encoded{{/str}}</th>
             <th scope="col">{{#str}}column, tool_encoded{{/str}}</th>
             <th scope="col">{{#str}}report{{/str}}</th>
+            <th scope="col">{{#str}}lastchecked, tool_encoded{{/str}}</th>
+            <th scope="col">{{#str}}duration, tool_encoded{{/str}}</th>
             <th scope="col">{{#str}}actions{{/str}}</th>
         </tr>
     </thead>
@@ -74,8 +76,20 @@
                 <td>{{name}}</td>
                 <td>{{all}}</td>
                 <td>
-                    {{#reportstatus}}{{#str}}recordsfound, tool_encoded{{/str}}{{/reportstatus}}
-                    {{^reportstatus}}{{#str}}recordsfoundnotfound, tool_encoded{{/str}}{{/reportstatus}}
+                    {{#lastchecked}}
+                        {{#reportstatus}}{{#str}}recordsfound, tool_encoded{{/str}}{{/reportstatus}}
+                        {{^reportstatus}}{{#str}}recordsfoundnotfound, tool_encoded{{/str}}{{/reportstatus}}
+                    {{/lastchecked}}
+                </td>
+                <td>
+                    {{#lastchecked}}
+                        {{#userdate}}{{lastchecked}}, {{#str}} strftimedatetime, core_langconfig {{/str}}{{/userdate}}
+                    {{/lastchecked}}
+                </td>
+                <td>
+                    {{#lastchecked}}
+                        {{duration}}
+                    {{/lastchecked}}
                 </td>
                 <td>
                     <form {{#link}}action="{{link}}" {{/link}}method="post">
@@ -93,7 +107,7 @@
             </tr>
         {{/tables}}
         <tr>
-            <td colspan="4">
+            <td colspan="6">
                 <form class="text-right" {{#link}}action="{{link}}" {{/link}}method="post">
                     <input type="hidden" name="sesskey" value="{{sesskey}}">
                     <input type="hidden" name="all" value="true">

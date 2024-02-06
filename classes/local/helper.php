@@ -41,6 +41,7 @@ class helper {
     public static function getpotentialtables(\moodle_url $link): array {
         global $DB;
         $potentialtables = [];
+        $previousresults = $DB->get_records('tool_encoded_base64_tables', null, '', 'report_table, last_checked, duration');
         // Cached fetch.
         $tables = $DB->get_tables();
         foreach ($tables as $table) {
@@ -67,11 +68,14 @@ class helper {
                     'report_table = ? and report_columns = ?',
                     [$table, $all]
                 );
+                $previousresult = isset($previousresults[$table]);
                 $potentialtables[$table] = [
                     'name' => $table,
                     'columns' => $potentialcolumns,
                     'reportstatus' => $reportrun,
                     'all' => $all,
+                    'duration' => $previousresult ? format_time(max($previousresults[$table]->duration, 1)) : '',
+                    'lastchecked' => $previousresult ? $previousresults[$table]->last_checked : '',
                     'link' => $link->out(false),
                 ];
             }
