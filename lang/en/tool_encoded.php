@@ -30,6 +30,8 @@ $string['sizesetting'] = 'Size setting';
 $string['sizesettingdesc'] = 'The size in kilobytes to flag in the generated report.';
 
 // Generate page strings.
+$string['duration'] = 'Scan time';
+$string['lastchecked'] = 'Last checked';
 $string['recordsfound'] = 'Records found';
 $string['recordsfoundnotfound'] = 'No records found';
 $string['queuetable'] = 'Queue task for all columns';

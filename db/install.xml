@@ -4,6 +4,18 @@
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
+    <TABLE NAME="tool_encoded_base64_tables" COMMENT="Information about previous ad-hoc task runs on tables">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="report_table" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Table this record was found in."/>
+        <FIELD NAME="report_columns" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The csv formatted name of columns searched within."/>
+        <FIELD NAME="last_checked" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="duration" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
     <TABLE NAME="tool_encoded_base64_records" COMMENT="Output of ad-hoc tasks where suspected fields are stored.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
