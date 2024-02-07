@@ -100,7 +100,7 @@ class generate_report extends adhoc_task {
             foreach ($base64 as $value) {
                 preg_match('/data:(.*?);/', $value, $matches);
                 $cleanrecord->encoded_size = strlen(base64_decode($value));
-                $cleanrecord->mimetype = $matches[0];
+                $cleanrecord->mimetype = $matches[0] ?? '';
             }
             $cleanrecord->native_id = (int) $record->id;
             $cleanrecord->pid = $this->get_pid();
