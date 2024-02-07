@@ -61,8 +61,12 @@ class generate_report extends adhoc_task {
         $preppedrecords = $this->extend_records(unserialize(serialize($records)));
         $transaction = $DB->start_delegated_transaction();
         // Delete old report data. Restricting by column isn't neccesary as all relevant columns should be checked.
-        $DB->delete_records('tool_encoded_base64_records', ['report_table' => $this->get_custom_data()->table]);
-        $DB->delete_records('tool_encoded_base64_tables', ['report_table' => $this->get_custom_data()->table]);
+        $sql = "report_table = :table";
+        $params = [
+            'table' => $this->get_custom_data()->table,
+        ];
+        $DB->delete_records_select('tool_encoded_base64_records', $sql, $params);
+        $DB->delete_records_select('tool_encoded_base64_tables', $sql, $params);
         $DB->insert_records('tool_encoded_base64_records', $preppedrecords);
         $DB->insert_record('tool_encoded_base64_tables', $this->get_table_record($stime));
         $transaction->allow_commit();

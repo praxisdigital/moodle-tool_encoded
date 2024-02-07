@@ -47,6 +47,19 @@ class records extends base {
     }
 
     /**
+     * Database tables that this entity uses and their default aliases
+     *
+     * Required for 4.1 compatibility
+     *
+     * @return array
+     */
+    protected function get_default_table_aliases(): array {
+        return [
+            'tool_encoded_base64_records' => 'tebr',
+        ];
+    }
+
+    /**
      * The default title for this entity in the list of columns/conditions/filters in the report builder
      *
      * @return lang_string
