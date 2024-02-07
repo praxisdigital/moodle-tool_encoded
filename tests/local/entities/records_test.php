@@ -18,7 +18,7 @@ namespace tool_encoded\local\entities;
 
 use context_system;
 use core_reportbuilder\system_report_factory;
-use \tool_encoded\local\systemreports\records as recordsreport;
+use tool_encoded\local\systemreports\records as recordsreport;
 use tool_encoded\task\generate_report;
 
 defined('MOODLE_INTERNAL') || die();
@@ -33,6 +33,8 @@ defined('MOODLE_INTERNAL') || die();
  */
 class records_test extends \advanced_testcase {
     /**
+     * Tests the entities records
+     *
      * @return void
      */
     public function test_records(): void {

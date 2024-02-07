@@ -26,13 +26,13 @@ defined('MOODLE_INTERNAL') || die();
  * @package   tool_encoded
  * @copyright 2023 Mathew May <mathew.solutions>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    tool_encoded\task\generate_report
+ * @covers    \tool_encoded\task\generate_report
  */
 class generate_report_test extends \advanced_testcase {
     /**
      * Confirm the task is created and executed.
      *
-     * @dataProvider test_task_provider
+     * @dataProvider task_provider
      * @param string $table The desired table.
      * @param string $columns The desired columns.
      * @param array $records The expected records.
@@ -82,7 +82,7 @@ class generate_report_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function test_task_provider(): array {
+    public static function task_provider(): array {
         return [
             'workshop assessments.' => [
                 'workshop_assessments',
@@ -95,7 +95,7 @@ class generate_report_test extends \advanced_testcase {
                     'report_columns' => 'feedbackauthor',
                     'migrated' => 0,
                     'cmid' => 0,
-                ]
+                ],
             ],
         ];
     }

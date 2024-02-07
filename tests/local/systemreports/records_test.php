@@ -28,10 +28,10 @@ defined('MOODLE_INTERNAL') || die();
  * @package   tool_encoded
  * @copyright 2023 Mathew May <mathew.solutions>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    tool_encoded\local\systemreports\records
+ * @covers    \tool_encoded\local\systemreports\records
  */
 class records_test extends \advanced_testcase {
-    public function test_records() {
+    public function test_records(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -60,18 +60,8 @@ class records_test extends \advanced_testcase {
         $this->assertInstanceOf(records::class, $records);
         $this->assertEquals('Encoder log', $records->get_name());
 
-        //'records:pid' => core_reportbuilder\local\report\column Object (...)
-        //'records:report_table' => core_reportbuilder\local\report\column Object (...)
-        //'records:report_columns' => core_reportbuilder\local\report\column Object (...)
-        //'records:native_id' => core_reportbuilder\local\report\column Object (...)
-        //'records:encoded_size' => core_reportbuilder\local\report\column Object (...)
-        //'records:mimetype' => core_reportbuilder\local\report\column Object (...)
-        //'records:migrated' => core_reportbuilder\local\report\column Object (...)
-        //'task_log:duration' => core_reportbuilder\local\report\column Object (...)
-        //$this->assertEquals([], $records->get_columns());
+        // TODO: Implement assertEquals for $records->get_columns().
 
-        //0 => core_reportbuilder\local\report\action Object (...)
-        //1 => core_reportbuilder\local\report\action Object (...)
-        //$this->assertEquals([], $records->get_actions());
+        // TODO: Implement assertEquals for $records->get_actions().
     }
 }

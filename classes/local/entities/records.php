@@ -42,7 +42,7 @@ class records extends base {
      */
     protected function get_default_tables(): array {
         return [
-            'tool_encoded_base64_records'
+            'tool_encoded_base64_records',
         ];
     }
 

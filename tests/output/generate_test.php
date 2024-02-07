@@ -53,7 +53,7 @@ class generate_test extends \advanced_testcase {
         // Confirm we have reduced the subset of tables to only those with format columns.
         $this->assertLessThan(count($DB->get_tables()), $fetchedcount);
 
-        if($contains) {
+        if ($contains) {
             // Some tables that do have format columns, Given on average we have 90+ tables only check a subset.
             foreach ($expected as $table) {
                 $this->assertEquals($table, $fetchedtables[$table['name']]);
@@ -71,7 +71,7 @@ class generate_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function export_for_template_provider(): array {
+    public static function export_for_template_provider(): array {
         return [
             'Contains tables with formatted data.' => [
                 true,
@@ -81,13 +81,12 @@ class generate_test extends \advanced_testcase {
                         'columns' => [
                             [
                                 'name' => 'content',
-                            ]
+                            ],
                         ],
                         'all' => 'content',
                         'reportstatus' => false,
                         'link' => 'https://www.example.com/moodle/admin/tool/encoded/index.php',
-
-                ],
+                    ],
                     [
                         'name' => 'workshop_assessments',
                         'columns' => [
@@ -96,7 +95,7 @@ class generate_test extends \advanced_testcase {
                             ],
                             [
                                 'name' => 'feedbackreviewer',
-                            ]
+                            ],
                         ],
                         'all' => 'feedbackauthor,feedbackreviewer',
                         'reportstatus' => false,
@@ -107,7 +106,7 @@ class generate_test extends \advanced_testcase {
                         'columns' => [
                             [
                                 'name' => 'intro',
-                            ]
+                            ],
                         ],
                         'all' => 'intro',
                         'reportstatus' => false,
@@ -121,7 +120,7 @@ class generate_test extends \advanced_testcase {
                             ],
                             [
                                 'name' => 'feedback',
-                            ]
+                            ],
                         ],
                         'all' => 'answer,feedback',
                         'reportstatus' => false,
@@ -132,7 +131,7 @@ class generate_test extends \advanced_testcase {
                         'columns' => [
                             [
                                 'name' => 'message',
-                            ]
+                            ],
                         ],
                         'all' => 'message',
                         'reportstatus' => false,
