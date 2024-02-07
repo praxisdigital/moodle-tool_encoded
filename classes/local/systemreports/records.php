@@ -97,7 +97,7 @@ class records extends system_report {
             'records:encoded_size',
             'records:mimetype',
             'records:migrated',
-            'task_log:duration'
+            'task_log:duration',
         ]);
         $this->set_initial_sort_column('records:report_table', SORT_ASC);
     }
@@ -116,10 +116,18 @@ class records extends system_report {
             'records:mimetype',
             'records:migrated',
             'records:pid',
-            'records:cmid'
+            'records:cmid',
         ]);
     }
 
+    /**
+     * Called before rendering each row.
+     *
+     * Formats the view link.
+     *
+     * @param \stdclass $row
+     * @return void
+     */
     public function row_callback(\stdclass $row): void {
         $guessedlink = new moodle_url($row->link_fragment, ['id' => $row->native_id]);
         $row->guessedlink = $guessedlink->out(false);

@@ -16,6 +16,8 @@
 
 namespace tool_encoded\task;
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot . '/course/lib.php');
 
 use core\task\adhoc_task;
@@ -31,6 +33,10 @@ use core\task\manager;
 class generate_report extends adhoc_task {
     /**
      * Queue the task for the next run.
+     *
+     * @param string $table
+     * @param string $columns
+     * @return void
      */
     public static function queue(string $table, string $columns): void {
         $task = new self();
@@ -81,7 +87,7 @@ class generate_report extends adhoc_task {
             $base64 = preg_grep('/data:([^"]+)*/', (array) $record);
             // Future improvement: Handle the case where there are multiple base64 matches.
             foreach ($base64 as $value) {
-                preg_match('/data:(.*?);/', $value,$matches);
+                preg_match('/data:(.*?);/', $value, $matches);
                 $cleanrecord->encoded_size = strlen(base64_decode($value));
                 $cleanrecord->mimetype = $matches[0];
             }

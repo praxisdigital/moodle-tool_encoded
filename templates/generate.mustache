@@ -36,11 +36,11 @@
                 "columns": [
                     {
                         "name": "column1",
-                        "link": ""
+                        "link": "url"
                     },
                     {
                         "name": "column2",
-                        "link": ""
+                        "link": "url"
                     }
                 ],
                 "all": "column1, column2"
@@ -50,7 +50,7 @@
                 "columns": [
                     {
                         "name": "column1",
-                        "link": ""
+                        "link": "url"
                     }
                 ],
                 "all": "column1"
@@ -78,7 +78,7 @@
                     {{^reportstatus}}{{#str}}recordsfoundnotfound, tool_encoded{{/str}}{{/reportstatus}}
                 </td>
                 <td>
-                    <form action="{{link}}" method="post">
+                    <form {{#link}}action="{{link}}" {{/link}}method="post">
                         <input type="hidden" name="sesskey" value="{{sesskey}}">
                         <input type="hidden" name="table" value="{{name}}">
                         <input type="hidden" name="columns" value="{{all}}">
@@ -93,8 +93,8 @@
             </tr>
         {{/tables}}
         <tr>
-            <td colspan="12">
-                <form class="text-right" action="{{link}}" method="post">
+            <td colspan="4">
+                <form class="text-right" {{#link}}action="{{link}}" {{/link}}method="post">
                     <input type="hidden" name="sesskey" value="{{sesskey}}">
                     <input type="hidden" name="all" value="true">
                     <button class="btn btn-primary" name="action" value="generate" type="submit">{{#str}}queuealltables, tool_encoded, {{count}}{{/str}}</button>

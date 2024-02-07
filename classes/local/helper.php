@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Helping functions for the encoded tool.
- * TODO: Needs unit testing, currently covered by Behat.
+ * Helping functions for the encoded tool. TODO: Needs unit testing, currently covered by Behat.
  *
  * @package   tool_encoded
  * @copyright 2023 Mathew May <mathew.solutions>
@@ -27,6 +26,9 @@ namespace tool_encoded\local;
 
 use tool_encoded\task\generate_report;
 
+/**
+ * Tool encoded helper class.
+ */
 class helper {
 
     /**
@@ -36,10 +38,10 @@ class helper {
      * @return array
      * @throws \dml_exception
      */
-    public static function getPotentialtables(\moodle_url $link): array {
+    public static function getpotentialtables(\moodle_url $link): array {
         global $DB;
         $potentialtables = [];
-        // Cached fetch;
+        // Cached fetch.
         $tables = $DB->get_tables();
         foreach ($tables as $table) {
             $potentialcolumns = [];
@@ -78,13 +80,13 @@ class helper {
     }
 
     /**
-     * Trimmed down version of getPotentialtables to be used to spawn tasks across all tables.
+     * Trimmed down version of getpotentialtables to be used to spawn tasks across all tables.
      *
      * @throws \dml_exception
      */
-    public static function spawnReportTasks() {
+    public static function spawnreporttasks() {
         global $DB;
-        // Cached fetch;
+        // Cached fetch.
         $tables = $DB->get_tables();
         foreach ($tables as $table) {
             $tablecols = $DB->get_columns($table);

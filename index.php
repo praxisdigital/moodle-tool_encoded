@@ -55,7 +55,7 @@ if (data_submitted() && confirm_sesskey()) {
     $action = $form->action;
     if ($action === 'generate') {
         if (isset($form->all) && (bool) $form->all === true) {
-            helper::spawnReportTasks();
+            helper::spawnreporttasks();
         } else {
             generate_report::queue($form->table, $form->columns);
         }
