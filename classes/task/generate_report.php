@@ -56,6 +56,11 @@ class generate_report extends adhoc_task {
     public function execute(): void {
         global $DB;
         $stime = time();
+
+        // Large tables may take time and memory.
+        \core_php_time_limit::raise();
+        raise_memory_limit(MEMORY_HUGE);
+
         $records = $this->search_columns();
         // Make a deep clone of the records just in case other functions need the raw data.
         $preppedrecords = $this->extend_records(unserialize(serialize($records)));
