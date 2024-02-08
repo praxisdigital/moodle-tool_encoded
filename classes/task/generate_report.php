@@ -142,6 +142,10 @@ class generate_report extends adhoc_task {
             $cleanrecord->encoded_size = max(array_map(function($column) use ($record) {
                 return $record->{$column . '_size'} ?? 0;
             }, explode(',', $this->get_custom_data()->columns)));
+            // Apply size setting filter.
+            if ($cleanrecord->encoded_size < (get_config('tool_encoded', 'size') * 1024)) {
+                return false;
+            }
             $cleanrecord->native_id = (int) $record->id;
             $cleanrecord->pid = $this->get_pid();
             $cleanrecord->report_table = $this->get_custom_data()->table;
