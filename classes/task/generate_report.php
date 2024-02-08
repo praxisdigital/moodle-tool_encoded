@@ -123,14 +123,20 @@ class generate_report extends adhoc_task {
      * @return array
      */
     private function extend_records(array $records): array {
-        return array_map(function($record) {
+        return array_filter(array_map(function($record) {
             $cleanrecord = new \stdClass();
-            // TODO: Improve regex.
+            // Attempt to get mimetype.
             $base64 = preg_grep('/data:([^"]+)*/', (array) $record);
-            // Future improvement: Handle the case where there are multiple base64 matches.
             foreach ($base64 as $value) {
-                preg_match('/data:(.*?);/', $value, $matches);
-                $cleanrecord->mimetype = $matches[0] ?? '';
+                preg_match('/data:(.*?);base64/', $value, $matches);
+                if (isset($matches[1])) {
+                    $cleanrecord->mimetype = $matches[1];
+                    break;
+                }
+            }
+            // No matching mimetype found indicates a false positive.
+            if (!isset($cleanrecord->mimetype)) {
+                return false;
             }
             // Get max column size from provided columns _size field.
             $cleanrecord->encoded_size = max(array_map(function($column) use ($record) {
@@ -144,7 +150,7 @@ class generate_report extends adhoc_task {
             $cleanrecord->cmid = $record->cmid ?? 0;
             $cleanrecord->link_fragment = $this->link_slug_guess();
             return $cleanrecord;
-        }, $records);
+        }, $records));
     }
 
     /**

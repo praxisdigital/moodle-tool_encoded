@@ -89,7 +89,7 @@ class generate_report_test extends \advanced_testcase {
                 'feedbackauthor',
                 [
                     'encoded_size' => 113,
-                    'mimetype' => 'data:image/gif;',
+                    'mimetype' => 'image/gif',
                     'pid' => 0,
                     'report_table' => 'workshop_assessments',
                     'report_columns' => 'feedbackauthor',
