@@ -83,11 +83,37 @@ class generate_report extends adhoc_task {
      */
     private function search_columns(): array {
         global $DB;
-        $records = $DB->get_records($this->get_custom_data()->table, null, null);
+        $table = $this->get_custom_data()->table;
+        $tablecols = array_keys($DB->get_columns($table));
+        $columns = implode(',', array_intersect($tablecols, ['id', 'cmid']));
 
-        return array_filter($records, function($record) {
-            return preg_grep('/data:([^"]+)*/', (array) $record);
-        });
+        $sql = "SELECT $columns";
+        $params = [];
+
+        // Grabs size and mimetype from base64 columns without the column to avoid memory issues.
+        $searchcols = explode(',', $this->get_custom_data()->columns);
+        foreach ($searchcols as $col) {
+            $paramname = $col . '_pos';
+            // Use length as size approximation to avoid loading the full base64 file.
+            $sql .= ",LENGTH($col) AS {$col}_size,";
+            // Use a simplified query to get the start of a base64 string, process later.
+            $sql .= $DB->sql_substr($col, $DB->sql_position(":$paramname", $col), 80) . " AS {$col}_mimetype";
+            $params += [$paramname => 'data:'];
+        }
+
+        // Add like conditions to find base64 data.
+        $sql .= " FROM {{$table}} WHERE ";
+        $count = 0;
+        foreach ($searchcols as $col) {
+            if ($count > 0) {
+                $sql .= " OR ";
+            }
+            $paramname = $col . '_like';
+            $sql .= $DB->sql_like($col, ":$paramname");
+            $params += [$paramname => '%data:%'];
+            $count++;
+        }
+        return $DB->get_records_sql($sql, $params);
     }
 
     /**
@@ -104,9 +130,12 @@ class generate_report extends adhoc_task {
             // Future improvement: Handle the case where there are multiple base64 matches.
             foreach ($base64 as $value) {
                 preg_match('/data:(.*?);/', $value, $matches);
-                $cleanrecord->encoded_size = strlen(base64_decode($value));
                 $cleanrecord->mimetype = $matches[0] ?? '';
             }
+            // Get max column size from provided columns _size field.
+            $cleanrecord->encoded_size = max(array_map(function($column) use ($record) {
+                return $record->{$column . '_size'} ?? 0;
+            }, explode(',', $this->get_custom_data()->columns)));
             $cleanrecord->native_id = (int) $record->id;
             $cleanrecord->pid = $this->get_pid();
             $cleanrecord->report_table = $this->get_custom_data()->table;

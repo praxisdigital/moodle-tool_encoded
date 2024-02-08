@@ -88,7 +88,7 @@ class generate_report_test extends \advanced_testcase {
                 'workshop_assessments',
                 'feedbackauthor',
                 [
-                    'encoded_size' => 67,
+                    'encoded_size' => 113,
                     'mimetype' => 'data:image/gif;',
                     'pid' => 0,
                     'report_table' => 'workshop_assessments',
