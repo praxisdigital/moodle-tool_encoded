@@ -56,6 +56,11 @@ class generate_report extends adhoc_task {
     public function execute(): void {
         global $DB;
         $stime = time();
+
+        // Large tables may take time and memory.
+        \core_php_time_limit::raise();
+        raise_memory_limit(MEMORY_HUGE);
+
         $records = $this->search_columns();
         // Make a deep clone of the records just in case other functions need the raw data.
         $preppedrecords = $this->extend_records(unserialize(serialize($records)));
@@ -78,11 +83,37 @@ class generate_report extends adhoc_task {
      */
     private function search_columns(): array {
         global $DB;
-        $records = $DB->get_records($this->get_custom_data()->table, null, null);
+        $table = $this->get_custom_data()->table;
+        $tablecols = array_keys($DB->get_columns($table));
+        $columns = implode(',', array_intersect($tablecols, ['id', 'cmid']));
 
-        return array_filter($records, function($record) {
-            return preg_grep('/data:([^"]+)*/', (array) $record);
-        });
+        $sql = "SELECT $columns";
+        $params = [];
+
+        // Grabs size and mimetype from base64 columns without the column to avoid memory issues.
+        $searchcols = explode(',', $this->get_custom_data()->columns);
+        foreach ($searchcols as $col) {
+            $paramname = $col . '_pos';
+            // Use length as size approximation to avoid loading the full base64 file.
+            $sql .= ",LENGTH($col) AS {$col}_size,";
+            // Use a simplified query to get the start of a base64 string, process later.
+            $sql .= $DB->sql_substr($col, $DB->sql_position(":$paramname", $col), 80) . " AS {$col}_mimetype";
+            $params += [$paramname => 'data:'];
+        }
+
+        // Add like conditions to find base64 data.
+        $sql .= " FROM {{$table}} WHERE ";
+        $count = 0;
+        foreach ($searchcols as $col) {
+            if ($count > 0) {
+                $sql .= " OR ";
+            }
+            $paramname = $col . '_like';
+            $sql .= $DB->sql_like($col, ":$paramname");
+            $params += [$paramname => '%data:%'];
+            $count++;
+        }
+        return $DB->get_records_sql($sql, $params);
     }
 
     /**
@@ -92,15 +123,28 @@ class generate_report extends adhoc_task {
      * @return array
      */
     private function extend_records(array $records): array {
-        return array_map(function($record) {
+        return array_filter(array_map(function($record) {
             $cleanrecord = new \stdClass();
-            // TODO: Improve regex.
+            // Attempt to get mimetype.
             $base64 = preg_grep('/data:([^"]+)*/', (array) $record);
-            // Future improvement: Handle the case where there are multiple base64 matches.
             foreach ($base64 as $value) {
-                preg_match('/data:(.*?);/', $value, $matches);
-                $cleanrecord->encoded_size = strlen(base64_decode($value));
-                $cleanrecord->mimetype = $matches[0] ?? '';
+                preg_match('/data:(.*?);base64/', $value, $matches);
+                if (isset($matches[1])) {
+                    $cleanrecord->mimetype = $matches[1];
+                    break;
+                }
+            }
+            // No matching mimetype found indicates a false positive.
+            if (!isset($cleanrecord->mimetype)) {
+                return false;
+            }
+            // Get max column size from provided columns _size field.
+            $cleanrecord->encoded_size = max(array_map(function($column) use ($record) {
+                return $record->{$column . '_size'} ?? 0;
+            }, explode(',', $this->get_custom_data()->columns)));
+            // Apply size setting filter.
+            if ($cleanrecord->encoded_size < (get_config('tool_encoded', 'size') * 1024)) {
+                return false;
             }
             $cleanrecord->native_id = (int) $record->id;
             $cleanrecord->pid = $this->get_pid() ?? 0;
@@ -110,7 +154,7 @@ class generate_report extends adhoc_task {
             $cleanrecord->cmid = $record->cmid ?? 0;
             $cleanrecord->link_fragment = $this->link_slug_guess();
             return $cleanrecord;
-        }, $records);
+        }, $records));
     }
 
     /**

@@ -41,6 +41,9 @@ class generate_report_test extends \advanced_testcase {
     public function test_task($table,  $columns,  $records): void {
         global $DB;
         $this->resetAfterTest();
+        // Disable size filter for tests as examples are under the default size.
+        set_config('size', 0, 'tool_encoded');
+
         $recordid = $DB->insert_record($table, [
             'submissionid' => '2',
             'reviewerid' => '2',
@@ -91,8 +94,8 @@ class generate_report_test extends \advanced_testcase {
                 'workshop_assessments',
                 'feedbackauthor',
                 [
-                    'encoded_size' => 67,
-                    'mimetype' => 'data:image/gif;',
+                    'encoded_size' => 113,
+                    'mimetype' => 'image/gif',
                     'pid' => 0,
                     'report_table' => 'workshop_assessments',
                     'report_columns' => 'feedbackauthor',

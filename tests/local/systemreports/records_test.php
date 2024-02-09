@@ -35,6 +35,8 @@ class records_test extends \advanced_testcase {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
+        // Disable size filter for tests as tests are under the default size.
+        set_config('size', 0, 'tool_encoded');
 
         $DB->insert_record('workshop_assessments', [
             'submissionid' => '2',
