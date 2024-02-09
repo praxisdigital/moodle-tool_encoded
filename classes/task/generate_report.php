@@ -103,7 +103,7 @@ class generate_report extends adhoc_task {
                 $cleanrecord->mimetype = $matches[0] ?? '';
             }
             $cleanrecord->native_id = (int) $record->id;
-            $cleanrecord->pid = $this->get_pid();
+            $cleanrecord->pid = $this->get_pid() ?? 0;
             $cleanrecord->report_table = $this->get_custom_data()->table;
             $cleanrecord->report_columns = $this->get_custom_data()->columns;
             $cleanrecord->migrated = 0;

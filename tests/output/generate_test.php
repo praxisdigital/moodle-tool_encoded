@@ -86,6 +86,8 @@ class generate_test extends \advanced_testcase {
                         'all' => 'content',
                         'reportstatus' => false,
                         'link' => 'https://www.example.com/moodle/admin/tool/encoded/index.php',
+                        'duration' => '',
+                        'lastchecked' => '',
                     ],
                     [
                         'name' => 'workshop_assessments',
@@ -100,6 +102,8 @@ class generate_test extends \advanced_testcase {
                         'all' => 'feedbackauthor,feedbackreviewer',
                         'reportstatus' => false,
                         'link' => 'https://www.example.com/moodle/admin/tool/encoded/index.php',
+                        'duration' => '',
+                        'lastchecked' => '',
                     ],
                     [
                         'name' => 'label',
@@ -111,6 +115,8 @@ class generate_test extends \advanced_testcase {
                         'all' => 'intro',
                         'reportstatus' => false,
                         'link' => 'https://www.example.com/moodle/admin/tool/encoded/index.php',
+                        'duration' => '',
+                        'lastchecked' => '',
                     ],
                     [
                         'name' => 'question_answers',
@@ -125,6 +131,8 @@ class generate_test extends \advanced_testcase {
                         'all' => 'answer,feedback',
                         'reportstatus' => false,
                         'link' => 'https://www.example.com/moodle/admin/tool/encoded/index.php',
+                        'duration' => '',
+                        'lastchecked' => '',
                     ],
                     [
                         'name' => 'forum_posts',
@@ -136,6 +144,8 @@ class generate_test extends \advanced_testcase {
                         'all' => 'message',
                         'reportstatus' => false,
                         'link' => 'https://www.example.com/moodle/admin/tool/encoded/index.php',
+                        'duration' => '',
+                        'lastchecked' => '',
                     ],
                 ],
             ],

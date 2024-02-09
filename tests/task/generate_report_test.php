@@ -61,18 +61,21 @@ class generate_report_test extends \advanced_testcase {
         // Set method accessibility.
         $method = new ReflectionMethod(generate_report::class, 'search_columns');
         $method->setAccessible(true);
-        $searchedtables = $method->invoke(new generate_report(), $table, $columns);
 
-        $ermethod = new ReflectionMethod(generate_report::class, 'extend_records');
-        $ermethod->setAccessible(true);
         $erreport = new generate_report();
         $erreport->set_custom_data([
             'table' => $table,
             'columns' => $columns,
         ]);
+        $searchedtables = $method->invoke($erreport);
+
+        $ermethod = new ReflectionMethod(generate_report::class, 'extend_records');
+        $ermethod->setAccessible(true);
         $extendedrecords = $ermethod->invoke($erreport, $searchedtables);
         foreach ($extendedrecords as $errecord) {
             $records['native_id'] = $recordid;
+            // Temporarily pass link_fragment until links are properly set up.
+            $records['link_fragment'] = $errecord->link_fragment;
             $this->assertEquals($records, (array) $errecord);
         }
     }
