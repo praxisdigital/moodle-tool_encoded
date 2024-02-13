@@ -85,7 +85,8 @@ class generate_report extends adhoc_task {
         global $DB;
         $table = $this->get_custom_data()->table;
         $tablecols = array_keys($DB->get_columns($table));
-        $columns = implode(',', array_intersect($tablecols, ['id', 'cmid']));
+        $module = $DB->get_record('modules', ['name' => $table]);
+        $columns = 't.' . implode(',t.', array_intersect($tablecols, ['id', 'course']));
 
         $sql = "SELECT $columns";
         $params = [];
@@ -95,23 +96,32 @@ class generate_report extends adhoc_task {
         foreach ($searchcols as $col) {
             $paramname = $col . '_pos';
             // Use length as size approximation to avoid loading the full base64 file.
-            $sql .= ",LENGTH($col) AS {$col}_size,";
+            $sql .= ",LENGTH(t.$col) AS {$col}_size,";
             // Use a simplified query to get the start of a base64 string, process later.
-            $sql .= $DB->sql_substr($col, $DB->sql_position(":$paramname", $col), 80) . " AS {$col}_mimetype";
+            $sql .= $DB->sql_substr("t.$col", $DB->sql_position(":$paramname", "t.$col"), 80) . " AS {$col}_mimetype";
             $params += [$paramname => 'data:'];
         }
 
+        // Get course module id if we have enough data to perform a join.
+        $getcmid = isset($module->id) && in_array('course', $tablecols);
+        $sql .= ($getcmid) ? ",cm.id AS 'cmid'" : "";
+        if ($getcmid) {
+            $sql .= ",cm.id AS 'cmid'";
+        }
+        $sql .= " FROM {{$table}} t";
+        if ($getcmid) {
+            $sql .= " JOIN {course_modules} cm ON cm.course = t.course AND cm.instance = t.id AND cm.module = :moduleid";
+            $params += ['moduleid' => $module->id];
+        }
+
         // Add like conditions to find base64 data.
-        $sql .= " FROM {{$table}} WHERE ";
-        $count = 0;
+        $firstcond = true;
         foreach ($searchcols as $col) {
-            if ($count > 0) {
-                $sql .= " OR ";
-            }
+            $sql .= ($firstcond) ? " WHERE " : " OR ";
             $paramname = $col . '_like';
-            $sql .= $DB->sql_like($col, ":$paramname");
+            $sql .= $DB->sql_like("t.$col", ":$paramname");
             $params += [$paramname => '%data:%'];
-            $count++;
+            $firstcond = false;
         }
         return $DB->get_records_sql($sql, $params);
     }
