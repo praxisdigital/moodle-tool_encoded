@@ -102,7 +102,7 @@ class generate_report extends adhoc_task {
             $params += [$paramname => 'data:'];
         }
 
-        // Get course module id if we have enough data to perform a join.
+        // Attempt to get course module id if we have enough data to perform a join.
         $getcmid = isset($module->id) && in_array('course', $tablecols);
         $sql .= ($getcmid) ? ",cm.id AS 'cmid'" : "";
         if ($getcmid) {
@@ -161,7 +161,7 @@ class generate_report extends adhoc_task {
             $cleanrecord->report_table = $this->get_custom_data()->table;
             $cleanrecord->report_columns = $this->get_custom_data()->columns;
             $cleanrecord->migrated = 0;
-            $cleanrecord->cmid = $record->cmid ?? 0;
+            $cleanrecord->instance_id = $record->cmid ?? 0;
             $cleanrecord->link_fragment = $this->link_slug_guess();
             return $cleanrecord;
         }, $records));

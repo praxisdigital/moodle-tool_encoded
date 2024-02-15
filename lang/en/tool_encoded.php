@@ -39,7 +39,7 @@ $string['queuealltables'] = 'Queue generation tasks for all ({$a}) tables';
 $string['generatenotification'] = 'Generation task queued';
 
 // RB strings.
-$string['cmid'] = 'Course module ID';
+$string['instanceid'] = 'Instance ID';
 $string['encoderlog'] = 'Encoder log';
 $string['encoderentity'] = 'Encoder entity';
 $string['size'] = '{$a} kb';

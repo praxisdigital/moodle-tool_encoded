@@ -186,13 +186,13 @@ class records extends base {
             ->set_disabled_aggregation(['avg', 'count', 'countdistinct', 'max', 'min', 'sum']);
 
         $columns[] = (new column(
-            'cmid',
-            new lang_string('cmid', 'tool_encoded'),
+            'instance_id',
+            new lang_string('instanceid', 'tool_encoded'),
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_INTEGER)
-            ->add_field("{$tablealias}.cmid")
+            ->add_field("{$tablealias}.instance_id")
             ->set_is_sortable(true)
             ->set_disabled_aggregation(['avg', 'count', 'countdistinct', 'max', 'min', 'sum']);
         return $columns;
@@ -298,10 +298,10 @@ class records extends base {
 
         $filters[] = (new filter(
             number::class,
-            'cmid',
-            new lang_string('cmid', 'tool_encoded'),
+            'instance_id',
+            new lang_string('instanceid', 'tool_encoded'),
             $this->get_entity_name(),
-            "{$tablealias}.cmid"
+            "{$tablealias}.instance_id"
         ))
             ->add_joins($this->get_joins());
         return $filters;

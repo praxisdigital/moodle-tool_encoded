@@ -46,7 +46,7 @@ class records extends system_report {
         // Any columns required by actions should be defined here to ensure they're always available.
         $this->add_base_fields("{$entitymainalias}.link_fragment");
         $this->add_base_fields("{$entitymainalias}.native_id");
-        $this->add_base_fields("{$entitymainalias}.cmid");
+        $this->add_base_fields("{$entitymainalias}.instance_id");
 
         // Now we can call our helper methods to add the content we want to include in the report.
         $this->add_columns();
@@ -84,7 +84,7 @@ class records extends system_report {
             'records:report_table',
             'records:report_columns',
             'records:native_id',
-            'records:cmid',
+            'records:instance_id',
             'records:encoded_size',
             'records:mimetype',
             'records:migrated',
@@ -106,7 +106,7 @@ class records extends system_report {
             'records:mimetype',
             'records:migrated',
             'records:pid',
-            'records:cmid',
+            'records:instance_id',
         ]);
     }
 
@@ -139,7 +139,7 @@ class records extends system_report {
         $this->add_action((new action(
             new moodle_url('#'),
             new pix_icon('i/delete', ''),
-            ['id' => ':nativeid', 'cmid' => ':cmid', 'name' => 'delete', 'value' => true],
+            ['id' => ':nativeid', 'instanceid' => ':instanceid', 'name' => 'delete', 'value' => true],
             false,
             new lang_string('delete'),
         )));

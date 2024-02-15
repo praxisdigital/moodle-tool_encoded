@@ -100,7 +100,7 @@ class generate_report_test extends \advanced_testcase {
                     'report_table' => 'workshop_assessments',
                     'report_columns' => 'feedbackauthor',
                     'migrated' => 0,
-                    'cmid' => 0,
+                    'instance_id' => 0,
                 ],
             ],
         ];
