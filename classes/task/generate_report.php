@@ -22,6 +22,7 @@ require_once($CFG->dirroot . '/course/lib.php');
 
 use core\task\adhoc_task;
 use core\task\manager;
+use tool_encoded\helper;
 
 /**
  * Given some columns to migrate, this task will generate a report of potential bad data.
@@ -161,7 +162,7 @@ class generate_report extends adhoc_task {
             $cleanrecord->report_table = $this->get_custom_data()->table;
             $cleanrecord->report_columns = $this->get_custom_data()->columns;
             $cleanrecord->migrated = 0;
-            $cleanrecord->instance_id = $record->cmid ?? 0;
+            $cleanrecord->instance_id = $record->cmid ?? helper::get_instance_id($cleanrecord);
             $cleanrecord->link_fragment = $this->link_slug_guess();
             return $cleanrecord;
         }, $records));

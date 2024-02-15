@@ -100,4 +100,95 @@ class helper {
         ];
         return $mapping[$table][$column] ?? [];
     }
+
+    /**
+     * Attempts to get an instance id for a base64 record.
+     *
+     * @param \stdClass $record
+     * @return int
+     */
+    public static function get_instance_id(\stdClass $record) {
+        $table = $record->report_table;
+        // TODO: Handle multiple columns.
+        $column = explode(',', $record->report_columns)[0];
+        if (empty($mapping = self::get_mapping($table, $column))) {
+            return 0;
+        }
+
+        switch($mapping['context']) {
+            case CONTEXT_MODULE:
+                return self::get_module_id($record, $mapping);
+            case CONTEXT_COURSE:
+                return self::get_course_id($record, $mapping);
+            // TODO: Implement remaining contexts.
+            case CONTEXT_USER:
+            case CONTEXT_BLOCK:
+            default:
+                return 0;
+        }
+    }
+
+    /**
+     * Attempts to get the course id for some known tables.
+     *
+     * @param \stdClass $record
+     * @param array $mapping
+     * @return int
+     */
+    private static function get_course_id(\stdClass $record, array $mapping): int {
+        GLOBAL $DB;
+
+        if ($record->report_table === 'question') {
+            $sql = "SELECT
+                        quiz.course
+                    FROM
+                        {question} question
+                    JOIN {question_versions} qv ON question.id = qv.questionid
+                    JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                    JOIN {question_references} qr ON qr.questionbankentryid = qbe.id
+                        AND qr.component = 'mod_quiz'
+                        AND qr.questionarea = 'slot'
+                    JOIN {quiz_slots} quiz_slots ON qr.itemid = quiz_slots.id
+                    JOIN {quiz} quiz ON quiz_slots.quizid = quiz.id
+                    WHERE question.id = :questionid";
+            $params = ['questionid' => $record->native_id];
+            return $DB->get_record_sql($sql, $params)->course ?? 0;
+        }
+        return 0;
+    }
+
+    /**
+     * Attempts to get the module id for some module subtables.
+     *
+     * @param \stdClass $record
+     * @param array $mapping
+     * @return int
+     */
+    private static function get_module_id(\stdClass $record, array $mapping): int {
+        GLOBAL $DB;
+
+        $modulename = str_replace('mod_', '', $mapping['component']);
+        $module = $DB->get_record('modules', ['name' => $modulename]);
+        if (!isset($module)) {
+            return 0;
+        }
+
+        $table = $record->report_table;
+        $modulecols = array_keys($DB->get_columns($modulename));
+        if (!empty($simplejoin = $mapping['simplejoin']) && in_array('course', $modulecols)) {
+            $sql = "SELECT
+                        cm.id
+                    FROM
+                        {{$table}} t
+                    JOIN {{$modulename}} m ON m.id = t.{$simplejoin}
+                    JOIN {course_modules} cm ON cm.course = m.course AND cm.instance = m.id AND cm.module = :moduleid
+                    WHERE t.id = :nativeid";
+            $params = [
+                'moduleid' => $module->id,
+                'nativeid' => $record->native_id,
+            ];
+            return $DB->get_record_sql($sql, $params)->id ?? 0;
+        }
+        return 0;
+    }
 }
