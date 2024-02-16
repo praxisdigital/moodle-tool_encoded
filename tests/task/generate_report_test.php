@@ -77,8 +77,6 @@ class generate_report_test extends \advanced_testcase {
         $extendedrecords = $ermethod->invoke($erreport, $searchedtables);
         foreach ($extendedrecords as $errecord) {
             $records['native_id'] = $recordid;
-            // Temporarily pass link_fragment until links are properly set up.
-            $records['link_fragment'] = $errecord->link_fragment;
             $this->assertEquals($records, (array) $errecord);
         }
     }

@@ -110,4 +110,14 @@ class helper {
             }
         }
     }
+
+    /**
+     * Returns the amount of problematic report records.
+     *
+     * @return int
+     */
+    public static function countrecords(): int {
+        global $DB;
+        return $DB->count_records('tool_encoded_base64_records');
+    }
 }

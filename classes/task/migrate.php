@@ -66,9 +66,11 @@ class migrate extends adhoc_task {
         $records = $DB->get_records('tool_encoded_base64_records', $conditions);
         // TODO: Add table only queue.
         foreach ($records as $record) {
-            $record->migrated = $this->migrate_record($record);
-            // Update the state of the record to indicate it has been migrated.
-            $DB->update_record('tool_encoded_base64_records', $record);
+            if ($record->migrated = $this->migrate_record($record)) {
+                // Update the state of the record to indicate it has been migrated.
+                $DB->update_record('tool_encoded_base64_records', $record);
+                mtrace(get_string('migratesuccess', 'tool_encoded', $record));
+            }
         }
     }
 
@@ -175,9 +177,10 @@ class migrate extends adhoc_task {
             'contextid' => $context->id,
             'component' => $mapping['component'],
             'filearea' => $mapping['filearea'],
-            'itemid' => ($mapping['itemid'] === '$id') ? $record->native_id : $mapping['itemid'],
+            'itemid' => str_replace('{$id}', $record->native_id, $mapping['itemid']),
             'filepath' => '/',
             'filename' => $basename . '_' . uniqid() . $extension,
+            'source' => 'tool_encoded',
         ];
 
         // Create plugin file.

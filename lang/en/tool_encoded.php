@@ -39,6 +39,7 @@ $string['queuealltables'] = 'Queue generation tasks for all ({$a}) tables';
 $string['generatenotification'] = 'Generation task queued';
 
 // RB strings.
+$string['reportid'] = 'ID';
 $string['instanceid'] = 'Instance ID';
 $string['encoderlog'] = 'Encoder log';
 $string['encoderentity'] = 'Encoder entity';
@@ -47,4 +48,12 @@ $string['recordid'] = 'Native ID';
 $string['table'] = 'Table';
 $string['column'] = 'Column';
 $string['mime'] = 'MIME Type';
+$string['migrate'] = 'Migrate';
 $string['migrated'] = 'Migrated';
+$string['queuerecord'] = 'Queue migrate task for this record';
+$string['queueallrecords'] = 'Queue migrate tasks for all records';
+$string['migratenotification'] = 'Migrate task queued for record {$a}';
+$string['migratenotificationall'] = 'Migrate task queued for all records';
+
+// Task status.
+$string['migratesuccess'] = 'Record {$a->id} successfully migrated to pluginfile: {$a->report_table} {$a->report_column} {$a->native_id}';

@@ -158,7 +158,6 @@ class generate_report extends adhoc_task {
                 $cleanrecord->report_column = $column;
                 $cleanrecord->migrated = 0;
                 $cleanrecord->instance_id = $record->cmid ?? helper::get_instance_id($cleanrecord);
-                $cleanrecord->link_fragment = $this->link_slug_guess();
                 $cleanrecords[] = $cleanrecord;
             }
         }
@@ -178,30 +177,5 @@ class generate_report extends adhoc_task {
         $tablerecord->last_checked = $stime;
         $tablerecord->duration = (time() - $stime);
         return $tablerecord;
-    }
-
-    /**
-     * Take a table name and guess the link slug.
-     *
-     * @return string
-     */
-    private function link_slug_guess(): string {
-        $table = $this->get_custom_data()->table;
-        $tablerename = str_replace('_', '/', $table);
-        $guess = strtok($table, '_');
-        // This catches alot of the tables, we'll add some manual handling for other common areas manually.
-        if (in_array($guess, array_keys(get_module_types_names()))) {
-            $slug = '/mod/'.$tablerename.'/view.php';
-        } else if (strpos($guess, 'question') || strpos($guess, 'qtype')) {
-            // Assume it's a question and try to guess the slug.
-            $slug = '/question/edit.php';
-        } else if (strpos($guess, 'grade') || strpos($guess, 'grading') || strpos($guess, 'gradingform')) {
-            // It might be a grade item so lets go there.
-            $slug = '/grade/edit/tree/index.php';
-        } else {
-            // Throwing everything at the wall and just flat out guessing.
-            $slug = '/'.$tablerename;
-        }
-        return $slug;
     }
 }

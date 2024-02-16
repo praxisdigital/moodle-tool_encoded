@@ -47,58 +47,11 @@ class helper {
                 'filearea' => 'intro',
                 'context' => CONTEXT_MODULE,
                 'itemid' => 0,
-                'view' => 'course/modedit.php?update=$instanceid',
+                'view' => '/course/modedit.php?update={$cmid}',
             ];
         }
 
-        $mapping = [
-            'question' => [
-                'questiontext' => [
-                    'component' => 'question',
-                    'filearea' => 'questiontext',
-                    'context' => CONTEXT_COURSE,
-                    'itemid' => '$id',
-                    'view' => 'question/bank/editquestion/question.php?courseid=$instanceid&id=$id',
-                ],
-                'generalfeedback' => [
-                    'component' => 'question',
-                    'filearea' => 'generalfeedback',
-                    'context' => CONTEXT_COURSE,
-                    'itemid' => '$id',
-                    'view' => 'question/bank/editquestion/question.php?courseid=$instanceid&id=$id',
-                ],
-            ],
-            'book_chapters' => [
-                'content' => [
-                    'component' => 'mod_book',
-                    'filearea' => 'chapter',
-                    'context' => CONTEXT_MODULE,
-                    'itemid' => '$id',
-                    'view' => 'mod/book/edit.php?cmid=$instanceid&id=$id',
-                    'simplejoin' => 'bookid',
-                ],
-            ],
-            'lesson_pages' => [
-                'contents' => [
-                    'component' => 'mod_lesson',
-                    'filearea' => 'page_contents',
-                    'context' => CONTEXT_MODULE,
-                    'itemid' => '$id',
-                    'view' => 'mod/lesson/editpage.php?id=$instanceid&pageid=$id&edit=1',
-                    'simplejoin' => 'lessonid',
-                ],
-            ],
-            'workshop_submissions' => [
-                'content' => [
-                    'component' => 'mod_workshop',
-                    'filearea' => 'submission_content',
-                    'context' => CONTEXT_MODULE,
-                    'itemid' => '$id',
-                    'view' => '',
-                    'simplejoin' => 'workshopid',
-                ]
-            ]
-        ];
+        $mapping = self::get_all_mapping();
         return $mapping[$table][$column] ?? [];
     }
 
@@ -188,5 +141,70 @@ class helper {
             return $DB->get_record_sql($sql, $params)->id ?? 0;
         }
         return 0;
+    }
+
+    /**
+     * Formats a link using part of a record.
+     *
+     * @param \stdClass $record
+     * @return string
+     */
+    public static function format_view_link(\stdClass $record): string {
+        $link = self::get_mapping($record)['view'] ?? '';
+        if (!$link) {
+            return '';
+        }
+
+        // Add in proper ids.
+        $link = str_replace('{$id}', $record->native_id, $link);
+        $link = str_replace('{$cmid}', $record->instance_id, $link);
+        $link = str_replace('{$courseid}', $record->instance_id, $link);
+        return $link;
+    }
+
+    /**
+     * Mapping that helps handle report generation and migrations.
+     *
+     * @return array
+     */
+    public static function get_all_mapping(): array {
+        return [
+            'question' => [
+                'questiontext' => [
+                    'component' => 'question',
+                    'filearea' => 'questiontext',
+                    'context' => CONTEXT_COURSE,
+                    'itemid' => '{$id}',
+                    'view' => '/question/bank/editquestion/question.php?courseid={$courseid}&id={$id}',
+                ],
+                'generalfeedback' => [
+                    'component' => 'question',
+                    'filearea' => 'generalfeedback',
+                    'context' => CONTEXT_COURSE,
+                    'itemid' => '{$id}',
+                    'view' => '/question/bank/editquestion/question.php?courseid={$courseid}&id={$id}',
+                ],
+            ],
+            'book_chapters' => [
+                'content' => [
+                    'component' => 'mod_book',
+                    'filearea' => 'chapter',
+                    'context' => CONTEXT_MODULE,
+                    'itemid' => '{$id}',
+                    'view' => '/mod/book/edit.php?cmid={$cmid}&id={$id}',
+                    'simplejoin' => 'bookid',
+                ],
+            ],
+            'lesson_pages' => [
+                'contents' => [
+                    'component' => 'mod_lesson',
+                    'filearea' => 'page_contents',
+                    'context' => CONTEXT_MODULE,
+                    'itemid' => '{$id}',
+                    'view' => '/mod/lesson/editpage.php?id={$cmid}&pageid={$id}&edit=1',
+                    'simplejoin' => 'lessonid',
+                ],
+            ],
+        ];
     }
 }
