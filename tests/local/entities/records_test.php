@@ -70,7 +70,7 @@ class records_test extends \advanced_testcase {
         $rt = $records->get_filter('records:report_table');
         $rto = $rt->get_options();
 
-        $rc = $records->get_filter('records:report_columns');
+        $rc = $records->get_filter('records:report_column');
         $rco = $rc->get_options();
 
         $mt = $records->get_filter('records:mimetype');

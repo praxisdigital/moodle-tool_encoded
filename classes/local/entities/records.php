@@ -111,13 +111,13 @@ class records extends base {
 
         // Table columns column.
         $columns[] = (new column(
-            'report_columns',
+            'report_column',
             new lang_string('column', 'tool_encoded'),
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
-            ->add_field("{$tablealias}.report_columns")
+            ->add_field("{$tablealias}.report_column")
             ->set_is_sortable(true);
 
         // Mimetype column.
@@ -229,16 +229,16 @@ class records extends base {
 
         $filters[] = (new filter(
             autocomplete::class,
-            'report_columns',
+            'report_column',
             new lang_string('column', 'tool_encoded'),
             $this->get_entity_name(),
-            "{$tablealias}.report_columns"
+            "{$tablealias}.report_column"
         ))
             ->add_joins($this->get_joins())
             ->set_options_callback(static function(): array {
                 global $DB;
                 $cols = $DB->get_fieldset_sql(
-                    'SELECT DISTINCT report_columns FROM {tool_encoded_base64_records} ORDER BY report_columns ASC'
+                    'SELECT DISTINCT report_column FROM {tool_encoded_base64_records} ORDER BY report_column ASC'
                 );
                 $options = [];
                 foreach ($cols as $col) {

@@ -45,6 +45,6 @@ $string['encoderentity'] = 'Encoder entity';
 $string['size'] = '{$a} kb';
 $string['recordid'] = 'Native ID';
 $string['table'] = 'Table';
-$string['column'] = 'Column(s)';
+$string['column'] = 'Column';
 $string['mime'] = 'MIME Type';
 $string['migrated'] = 'Migrated';

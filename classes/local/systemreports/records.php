@@ -82,7 +82,7 @@ class records extends system_report {
         $this->add_columns_from_entities([
             'records:pid',
             'records:report_table',
-            'records:report_columns',
+            'records:report_column',
             'records:native_id',
             'records:instance_id',
             'records:encoded_size',
@@ -101,7 +101,7 @@ class records extends system_report {
     protected function add_filters(): void {
         $this->add_filters_from_entities([
             'records:report_table',
-            'records:report_columns',
+            'records:report_column',
             'records:encoded_size',
             'records:mimetype',
             'records:migrated',

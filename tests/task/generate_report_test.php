@@ -98,7 +98,7 @@ class generate_report_test extends \advanced_testcase {
                     'mimetype' => 'image/gif',
                     'pid' => 0,
                     'report_table' => 'workshop_assessments',
-                    'report_columns' => 'feedbackauthor',
+                    'report_column' => 'feedbackauthor',
                     'migrated' => 0,
                     'instance_id' => 0,
                 ],

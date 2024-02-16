@@ -84,18 +84,16 @@ class migrate extends adhoc_task {
         // Find the associated table and columns to attempt to replace data within.
         $storedrecord = $DB->get_record($record->report_table, ['id' => $record->native_id]);
         // Decode the encoded data.
-        $reportcolumns = explode(',', $record->report_columns);
-        foreach ($reportcolumns as $column) {
-            if (!$updatedtext = $this->decode_data($record, $storedrecord->{$column}, $column)) {
-                continue;
-            }
-            // Set the column to the link to the file.
-            $storedrecord->{$column} = $updatedtext;
-            if ($DB->update_record($record->report_table, $storedrecord)) {
-                $success = true;
-            } else {
-                $success = false;
-            }
+        $column = $record->report_column;
+        if (!$updatedtext = $this->decode_data($record, $storedrecord->{$column})) {
+            return false;
+        }
+        // Set the column to the link to the file.
+        $storedrecord->{$column} = $updatedtext;
+        if ($DB->update_record($record->report_table, $storedrecord)) {
+            $success = true;
+        } else {
+            $success = false;
         }
 
         if ($success) {
@@ -112,10 +110,9 @@ class migrate extends adhoc_task {
      *
      * @param stdClass $record
      * @param string $data
-     * @param string $columnname
      * @return string
      */
-    private function decode_data(stdClass $record, string $data, string $columnname): string {
+    private function decode_data(stdClass $record, string $data): string {
         preg_match_all('/src="([^"]+)"/', $data, $matches);
         if (empty($srcs = $matches[1])) {
             return '';
@@ -131,7 +128,7 @@ class migrate extends adhoc_task {
             }
             $base64string = substr($src, $start + strlen($check));
             $decodeddata = base64_decode($base64string);
-            if (!$pluginfile = $this->convert_to_pluginfile($record, $decodeddata, $columnname)) {
+            if (!$pluginfile = $this->convert_to_pluginfile($record, $decodeddata)) {
                 continue;
             }
             $data = str_replace($src, $pluginfile, $data);
@@ -145,14 +142,13 @@ class migrate extends adhoc_task {
      *
      * @param stdClass $record
      * @param string $filecontent
-     * @param string $columnname
      * @return string
      */
-    private function convert_to_pluginfile(stdClass $record, string $filecontent, string $columnname): string {
+    private function convert_to_pluginfile(stdClass $record, string $filecontent): string {
         $fs = get_file_storage();
 
         // Use mapped data to help create a filerecord.
-        if (empty($mapping = helper::get_mapping($record->report_table, $columnname))) {
+        if (empty($mapping = helper::get_mapping($record))) {
             return '';
         }
 

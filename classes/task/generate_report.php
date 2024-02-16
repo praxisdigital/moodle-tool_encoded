@@ -134,38 +134,35 @@ class generate_report extends adhoc_task {
      * @return array
      */
     private function extend_records(array $records): array {
-        return array_filter(array_map(function($record) {
-            $cleanrecord = new \stdClass();
-            // Attempt to get mimetype.
-            $base64 = preg_grep('/data:([^"]+)*/', (array) $record);
-            foreach ($base64 as $value) {
-                preg_match('/data:(.*?);base64/', $value, $matches);
+        $cleanrecords = [];
+        $columns = explode(',', $this->get_custom_data()->columns);
+        foreach ($records as $record) {
+            foreach ($columns as $column) {
+                $cleanrecord = new \stdClass();
+                // Attempt to get mimetype.
+                preg_match('/data:(.*?);base64/', $record->{$column . '_mimetype'}, $matches);
                 if (isset($matches[1])) {
                     $cleanrecord->mimetype = $matches[1];
-                    break;
+                } else {
+                    // No match indicates a false positive or no issue with this column.
+                    continue;
                 }
+                // Apply size setting filter.
+                $cleanrecord->encoded_size = $record->{$column . '_size'} ?? 0;
+                if ($cleanrecord->encoded_size < (get_config('tool_encoded', 'size') * 1024)) {
+                    continue;
+                }
+                $cleanrecord->native_id = (int) $record->id;
+                $cleanrecord->pid = $this->get_pid() ?? 0;
+                $cleanrecord->report_table = $this->get_custom_data()->table;
+                $cleanrecord->report_column = $column;
+                $cleanrecord->migrated = 0;
+                $cleanrecord->instance_id = $record->cmid ?? helper::get_instance_id($cleanrecord);
+                $cleanrecord->link_fragment = $this->link_slug_guess();
+                $cleanrecords[] = $cleanrecord;
             }
-            // No matching mimetype found indicates a false positive.
-            if (!isset($cleanrecord->mimetype)) {
-                return false;
-            }
-            // Get max column size from provided columns _size field.
-            $cleanrecord->encoded_size = max(array_map(function($column) use ($record) {
-                return $record->{$column . '_size'} ?? 0;
-            }, explode(',', $this->get_custom_data()->columns)));
-            // Apply size setting filter.
-            if ($cleanrecord->encoded_size < (get_config('tool_encoded', 'size') * 1024)) {
-                return false;
-            }
-            $cleanrecord->native_id = (int) $record->id;
-            $cleanrecord->pid = $this->get_pid() ?? 0;
-            $cleanrecord->report_table = $this->get_custom_data()->table;
-            $cleanrecord->report_columns = $this->get_custom_data()->columns;
-            $cleanrecord->migrated = 0;
-            $cleanrecord->instance_id = $record->cmid ?? helper::get_instance_id($cleanrecord);
-            $cleanrecord->link_fragment = $this->link_slug_guess();
-            return $cleanrecord;
-        }, $records));
+        }
+        return $cleanrecords;
     }
 
     /**

@@ -32,13 +32,14 @@ class helper {
     /**
      * Mapping that helps handle report generation and migrations.
      *
-     * @param string $table
-     * @param string $column
+     * @param \stdClass $record
      * @return array
      */
-    public static function get_mapping(string $table, string $column): array {
+    public static function get_mapping(\stdClass $record): array {
         GLOBAL $DB;
 
+        $table = $record->report_table;
+        $column = $record->report_column;
         $module = $DB->get_record('modules', ['name' => $table]);
         if (isset($module->id) && $column === 'intro') {
             return [
@@ -108,10 +109,7 @@ class helper {
      * @return int
      */
     public static function get_instance_id(\stdClass $record) {
-        $table = $record->report_table;
-        // TODO: Handle multiple columns.
-        $column = explode(',', $record->report_columns)[0];
-        if (empty($mapping = self::get_mapping($table, $column))) {
+        if (empty($mapping = self::get_mapping($record))) {
             return 0;
         }
 
