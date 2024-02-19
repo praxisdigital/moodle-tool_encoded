@@ -22,6 +22,11 @@ An admin tool for Moodle. Intended to provide a way to generate reports for colu
 4. Navigate to 'Site admin > Plugins > Admin tools > Base64 Encoder > Display report'
    1. You can also navigate to this page from a link in the report generation page
 5. Any found records will be displayed in a report builder table that can be filtered and sorted
+6. From this table you can choose to run additional actions (where supported):
+   1. View the problematic record in a text editor
+   2. Queue an attempt to automatically migrate the base64 data to a pluginfile
+
+At this time view and migrate support has only been implemented for a few specific tables/columns.
 
 ## GDPR
 This plugin is GDPR-compliant as it only stores the reference to records and does not restore user data.
