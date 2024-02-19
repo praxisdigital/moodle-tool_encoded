@@ -30,4 +30,4 @@ Contributing and support
 -----------------------
 Issues, and pull requests using github are welcome and encouraged!
 
-https://github.com/Chocolate-lightning/moodle-tool_base64encoder/issues
+https://github.com/catalyst/moodle-tool_encoded/issues
