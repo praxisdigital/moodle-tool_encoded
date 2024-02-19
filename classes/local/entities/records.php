@@ -212,7 +212,7 @@ class records extends base {
                 GLOBAL $OUTPUT;
                 return $OUTPUT->render_from_template('tool_encoded/reportlinks', [
                     'viewlink' => helper::format_view_link($row),
-                    'migrate' => !$row->migrated && !empty(helper::get_mapping($row)),
+                    'migrate' => helper::can_migrate($row),
                     'recordid' => $row->id,
                     'sesskey' => sesskey(),
                 ]);
