@@ -65,7 +65,7 @@ class helper {
                 // Check if we have any records for this table.
                 $reportrun = $DB->record_exists_select(
                     'tool_encoded_base64_records',
-                    'report_table = ? and report_columns = ?',
+                    'report_table = ?',
                     [$table, $all]
                 );
                 $previousresult = isset($previousresults[$table]);
@@ -109,5 +109,15 @@ class helper {
                 generate_report::queue($table, $all);
             }
         }
+    }
+
+    /**
+     * Returns the amount of problematic report records.
+     *
+     * @return int
+     */
+    public static function countrecords(): int {
+        global $DB;
+        return $DB->count_records('tool_encoded_base64_records');
     }
 }

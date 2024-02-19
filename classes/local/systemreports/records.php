@@ -17,11 +17,7 @@
 namespace tool_encoded\local\systemreports;
 
 use context_system;
-use lang_string;
-use moodle_url;
-use pix_icon;
 use core_reportbuilder\system_report;
-use core_reportbuilder\local\report\action;
 use tool_encoded\local\entities\records as record_entity;
 
 /**
@@ -43,15 +39,9 @@ class records extends system_report {
         $this->set_main_table('tool_encoded_base64_records', $entitymainalias);
         $this->add_entity($entitymain);
 
-        // Any columns required by actions should be defined here to ensure they're always available.
-        $this->add_base_fields("{$entitymainalias}.link_fragment");
-        $this->add_base_fields("{$entitymainalias}.native_id");
-        $this->add_base_fields("{$entitymainalias}.cmid");
-
         // Now we can call our helper methods to add the content we want to include in the report.
         $this->add_columns();
         $this->add_filters();
-        $this->add_actions();
     }
 
     /**
@@ -80,14 +70,15 @@ class records extends system_report {
      */
     protected function add_columns(): void {
         $this->add_columns_from_entities([
-            'records:pid',
+            'records:id',
             'records:report_table',
-            'records:report_columns',
+            'records:report_column',
             'records:native_id',
-            'records:cmid',
+            'records:instance_id',
             'records:encoded_size',
             'records:mimetype',
             'records:migrated',
+            'records:view_link',
         ]);
         $this->set_initial_sort_column('records:report_table', SORT_ASC);
     }
@@ -101,47 +92,12 @@ class records extends system_report {
     protected function add_filters(): void {
         $this->add_filters_from_entities([
             'records:report_table',
-            'records:report_columns',
+            'records:report_column',
             'records:encoded_size',
             'records:mimetype',
             'records:migrated',
-            'records:pid',
-            'records:cmid',
+            'records:id',
+            'records:instance_id',
         ]);
-    }
-
-    /**
-     * Called before rendering each row.
-     *
-     * Formats the view link.
-     *
-     * @param \stdclass $row
-     * @return void
-     */
-    public function row_callback(\stdclass $row): void {
-        $guessedlink = new moodle_url($row->link_fragment, ['id' => $row->native_id]);
-        $row->guessedlink = $guessedlink->out(false);
-    }
-
-    // TODO: Update this when unique records are fetched.
-    /**
-     * Add the system report actions. An extra column will be appended to each row, containing all actions added here
-     */
-    protected function add_actions(): void {
-        $this->add_action((new action(
-            new moodle_url('#'),
-            new pix_icon('t/viewdetails', ''),
-            ['data-action' => ':guessedlink'],
-            false,
-            new lang_string('view'),
-        )));
-        // Make some educated guesses on what the delete link should contain.
-        $this->add_action((new action(
-            new moodle_url('#'),
-            new pix_icon('i/delete', ''),
-            ['id' => ':nativeid', 'cmid' => ':cmid', 'name' => 'delete', 'value' => true],
-            false,
-            new lang_string('delete'),
-        )));
     }
 }

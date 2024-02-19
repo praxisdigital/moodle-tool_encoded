@@ -27,6 +27,7 @@ use core_reportbuilder\system_report_factory;
 use tool_encoded\local\systemreports\records;
 use tool_encoded\output\generate;
 use tool_encoded\task\generate_report;
+use tool_encoded\task\migrate;
 use tool_encoded\local\helper;
 
 require_once(__DIR__ . '/../../../config.php');
@@ -60,14 +61,29 @@ if (data_submitted() && confirm_sesskey()) {
             generate_report::queue($form->table, $form->columns);
         }
         echo notification::success(get_string('generatenotification', 'tool_encoded'));
+    } else if ($action === 'migrate') {
+        if (isset($form->recordid)) {
+            migrate::queue($form->recordid);
+            if ($form->recordid == 0) {
+                echo notification::success(get_string('migratenotificationall', 'tool_encoded'));
+            } else {
+                echo notification::success(get_string('migratenotification', 'tool_encoded', $form->recordid));
+            }
+        }
     }
 }
 
-if ($action === 'report') {
+if ($action === 'report' || $action === 'migrate') {
     $PAGE->set_heading(get_string('recordsfound', 'tool_encoded'));
     echo $OUTPUT->header();
     $report = system_report_factory::create(records::class, context_system::instance());
     echo $report->output();
+    echo $OUTPUT->render_from_template('tool_encoded/reportlinks', [
+        'migrateall' => true,
+        'recordid' => 0,
+        'count' => helper::countrecords(),
+        'sesskey' => sesskey(),
+    ]);
 } else {
     $PAGE->set_heading(get_string('generatereport', 'tool_encoded'));
     echo $OUTPUT->header();

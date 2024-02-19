@@ -25,6 +25,7 @@ use core_reportbuilder\local\filters\boolean_select;
 use core_reportbuilder\local\filters\number;
 use core_reportbuilder\local\report\column;
 use core_reportbuilder\local\report\filter;
+use tool_encoded\helper;
 
 /**
  * Entity class implementation
@@ -111,13 +112,13 @@ class records extends base {
 
         // Table columns column.
         $columns[] = (new column(
-            'report_columns',
+            'report_column',
             new lang_string('column', 'tool_encoded'),
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
-            ->add_field("{$tablealias}.report_columns")
+            ->add_field("{$tablealias}.report_column")
             ->set_is_sortable(true);
 
         // Mimetype column.
@@ -161,15 +162,15 @@ class records extends base {
                 return format::boolean_as_text($value);
             });
 
-        // PID column.
+        // ID column.
         $columns[] = (new column(
-            'pid',
-            new lang_string('pid', 'admin'),
+            'id',
+            new lang_string('reportid', 'tool_encoded'),
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_INTEGER)
-            ->add_field("{$tablealias}.pid")
+            ->add_field("{$tablealias}.id")
             ->set_is_sortable(true)
             ->set_disabled_aggregation(['avg', 'count', 'countdistinct', 'max', 'min', 'sum']);
 
@@ -186,15 +187,36 @@ class records extends base {
             ->set_disabled_aggregation(['avg', 'count', 'countdistinct', 'max', 'min', 'sum']);
 
         $columns[] = (new column(
-            'cmid',
-            new lang_string('cmid', 'tool_encoded'),
+            'instance_id',
+            new lang_string('instanceid', 'tool_encoded'),
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_INTEGER)
-            ->add_field("{$tablealias}.cmid")
+            ->add_field("{$tablealias}.instance_id")
             ->set_is_sortable(true)
             ->set_disabled_aggregation(['avg', 'count', 'countdistinct', 'max', 'min', 'sum']);
+
+        $columns[] = (new column(
+            'view_link',
+            new lang_string('actions'),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            ->set_type(column::TYPE_TEXT)
+            ->add_fields("{$tablealias}.id, {$tablealias}.report_table, {$tablealias}.report_column, {$tablealias}.native_id,
+                {$tablealias}.instance_id, {$tablealias}.migrated")
+            ->set_is_sortable(false)
+            ->set_disabled_aggregation(['avg', 'count', 'countdistinct', 'max', 'min', 'sum'])
+            ->add_callback(static function(string $value, \stdClass $row): string {
+                GLOBAL $OUTPUT;
+                return $OUTPUT->render_from_template('tool_encoded/reportlinks', [
+                    'viewlink' => helper::format_view_link($row),
+                    'migrate' => !$row->migrated && !empty(helper::get_mapping($row)),
+                    'recordid' => $row->id,
+                    'sesskey' => sesskey(),
+                ]);
+            });
         return $columns;
     }
 
@@ -229,16 +251,16 @@ class records extends base {
 
         $filters[] = (new filter(
             autocomplete::class,
-            'report_columns',
+            'report_column',
             new lang_string('column', 'tool_encoded'),
             $this->get_entity_name(),
-            "{$tablealias}.report_columns"
+            "{$tablealias}.report_column"
         ))
             ->add_joins($this->get_joins())
             ->set_options_callback(static function(): array {
                 global $DB;
                 $cols = $DB->get_fieldset_sql(
-                    'SELECT DISTINCT report_columns FROM {tool_encoded_base64_records} ORDER BY report_columns ASC'
+                    'SELECT DISTINCT report_column FROM {tool_encoded_base64_records} ORDER BY report_column ASC'
                 );
                 $options = [];
                 foreach ($cols as $col) {
@@ -289,19 +311,19 @@ class records extends base {
 
         $filters[] = (new filter(
             number::class,
-            'pid',
-            new lang_string('pid', 'admin'),
+            'id',
+            new lang_string('reportid', 'tool_encoded'),
             $this->get_entity_name(),
-            "{$tablealias}.pid"
+            "{$tablealias}.id"
         ))
             ->add_joins($this->get_joins());
 
         $filters[] = (new filter(
             number::class,
-            'cmid',
-            new lang_string('cmid', 'tool_encoded'),
+            'instance_id',
+            new lang_string('instanceid', 'tool_encoded'),
             $this->get_entity_name(),
-            "{$tablealias}.cmid"
+            "{$tablealias}.instance_id"
         ))
             ->add_joins($this->get_joins());
         return $filters;
