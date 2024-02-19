@@ -105,9 +105,8 @@ class generate_report extends adhoc_task {
 
         // Attempt to get course module id if we have enough data to perform a join.
         $getcmid = isset($module->id) && in_array('course', $tablecols);
-        $sql .= ($getcmid) ? ",cm.id AS 'cmid'" : "";
         if ($getcmid) {
-            $sql .= ",cm.id AS 'cmid'";
+            $sql .= ",cm.id AS cmid";
         }
         $sql .= " FROM {{$table}} t";
         if ($getcmid) {
