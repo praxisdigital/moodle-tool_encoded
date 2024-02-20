@@ -66,7 +66,7 @@ class migrate extends adhoc_task {
         $records = $DB->get_records('tool_encoded_base64_records', $conditions);
         // TODO: Add table only queue.
         foreach ($records as $record) {
-            if ($record->migrated = $this->migrate_record($record)) {
+            if (helper::can_migrate($record) && $record->migrated = $this->migrate_record($record)) {
                 // Update the state of the record to indicate it has been migrated.
                 $DB->update_record('tool_encoded_base64_records', $record);
                 mtrace(get_string('migratesuccess', 'tool_encoded', $record));

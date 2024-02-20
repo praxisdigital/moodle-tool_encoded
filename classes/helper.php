@@ -151,7 +151,7 @@ class helper {
      */
     public static function format_view_link(\stdClass $record): string {
         $link = self::get_mapping($record)['view'] ?? '';
-        if (!$link) {
+        if (!$link || empty($record->instance_id)) {
             return '';
         }
 
@@ -160,6 +160,17 @@ class helper {
         $link = str_replace('{$cmid}', $record->instance_id, $link);
         $link = str_replace('{$courseid}', $record->instance_id, $link);
         return $link;
+    }
+
+    /**
+     * Checks if a migration attempt can be performed.
+     * This requires valid mapping and an instance id.
+     *
+     * @param \stdClass $record
+     * @return bool
+     */
+    public static function can_migrate(\stdClass $record): bool {
+        return empty($record->migrated) && !empty($record->instance_id) && !empty(self::get_mapping($record));
     }
 
     /**
